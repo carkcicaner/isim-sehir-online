@@ -591,7 +591,7 @@ const LobbyScreen = ({ room, user, onStartGame, onLeave, onAddBot }) => {
                <h2 className="text-3xl md:text-4xl font-black flex items-center justify-center md:justify-start gap-3 text-white mb-2">
                  <Users className="text-cyan-400 w-8 h-8 md:w-10 md:h-10" /> Bekleme Salonu
                </h2>
-               <p className="text-slate-400 font-medium text-sm md:text-lg">Tüm cihazlarda süre ortak olacaktır!</p>
+               <p className="text-slate-400 font-medium text-sm md:text-lg">Herkes hazırsa oyunu başlat!</p>
              </div>
              <div className="relative z-10 mt-6 md:mt-0 bg-black/50 border-2 border-slate-700 px-6 py-3 rounded-3xl text-center shadow-inner">
                <span className="text-xs md:text-sm text-cyan-400 uppercase tracking-widest font-black block mb-1">Katılım Kodu</span>
@@ -645,36 +645,55 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
   const currentRoundData = room.rounds[room.currentRound];
   const [phase, setPhase] = useState('roulette'); 
   const [displayLetter, setDisplayLetter] = useState('?');
-  const [timeLeft, setTimeLeft] = useState(0);
+  
+  // YEREL SAAT SENKRONİZASYONU (SÜRE HATALARINI ÖNLER)
+  const [timeLeft, setTimeLeft] = useState(currentRoundData.durationSecs || 60);
   const [answers, setAnswers] = useState({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [localStartTime, setLocalStartTime] = useState(null);
   
   const inputRefs = useRef([]);
 
+  // 1. AŞAMA: RULET
   useEffect(() => {
-    const timerId = setInterval(() => {
-      const now = Date.now();
-      if (now < currentRoundData.startTime) {
-        setPhase('roulette');
-        setDisplayLetter(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]);
-      } else {
-        if (phase !== 'playing') {
-           setPhase('playing');
-           setDisplayLetter(currentRoundData.letter);
-           playSound('ding');
-        }
-        const remaining = Math.max(0, Math.floor((currentRoundData.endTime - now) / 1000));
-        setTimeLeft(remaining);
-        
-        if (remaining <= 5 && remaining > 0 && !hasSubmitted) playSound('tick');
-        
-        if (remaining === 0 && !hasSubmitted) {
-           handleSubmit();
-        }
+    // Sayfa her yeni turda yüklendiğinde tamamen sıfırla
+    setPhase('roulette');
+    setHasSubmitted(false);
+    setAnswers({});
+    setTimeLeft(currentRoundData.durationSecs || 60);
+
+    let ticks = 0;
+    const interval = setInterval(() => {
+      setDisplayLetter(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]);
+      ticks++;
+      if (ticks > 30) { // 3 saniye boyunca harf döner
+         clearInterval(interval);
+         setDisplayLetter(currentRoundData.letter);
+         setPhase('playing');
+         setLocalStartTime(Date.now()); // Oyunun GERÇEKTEN başladığı anı kaydet
+         playSound('ding');
       }
     }, 100);
-    return () => clearInterval(timerId);
-  }, [currentRoundData, phase, hasSubmitted]);
+
+    return () => clearInterval(interval);
+  }, [currentRoundData.letter, room.currentRound]);
+
+  // 2. AŞAMA: OYUN SÜRESİ
+  useEffect(() => {
+    if (phase === 'playing' && !hasSubmitted) {
+       if (timeLeft <= 0) {
+          handleSubmit(); // Süre biterse otomatik yolla
+          return;
+       }
+       const timerId = setTimeout(() => {
+          setTimeLeft(prev => {
+             if (prev <= 6 && prev > 1) playSound('tick');
+             return prev - 1;
+          });
+       }, 1000);
+       return () => clearTimeout(timerId);
+    }
+  }, [phase, timeLeft, hasSubmitted]);
 
   const handleInputChange = (category, value) => {
     setAnswers(prev => ({ ...prev, [category]: value }));
@@ -684,8 +703,9 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
     if (hasSubmitted) return;
     playSound('ding');
     setHasSubmitted(true);
-    const timeTaken = Math.floor((Date.now() - currentRoundData.startTime) / 1000);
-    onSubmitAnswers(answers, timeTaken); 
+    // Hız bonusunu hesaplamak için geçen süreyi hesapla
+    const timeTaken = (currentRoundData.durationSecs || 60) - timeLeft;
+    onSubmitAnswers(answers, timeTaken > 0 ? timeTaken : (currentRoundData.durationSecs || 60)); 
   };
 
   const handleKeyDown = (e, index) => {
@@ -1050,11 +1070,9 @@ export default function App() {
      if (!user || room.hostId !== user.uid) return;
      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', room.id);
      
-     const startTime = Date.now() + 5000; 
      const durationSecs = getDynamicTime(room.players);
-     const endTime = startTime + (durationSecs * 1000);
 
-     const newRound = { letter: getUnusedLetter([]), startTime, endTime, answers: {}, scores: {} };
+     const newRound = { letter: getUnusedLetter([]), durationSecs, answers: {}, scores: {} };
      await updateDoc(roomRef, { status: 'playing', currentRound: 0, rounds: [newRound] });
   };
 
@@ -1130,11 +1148,9 @@ export default function App() {
            const data = snap.data();
            const usedLetters = data.rounds.map(r => r.letter);
            
-           const startTime = Date.now() + 5000;
            const durationSecs = getDynamicTime(data.players);
-           const endTime = startTime + (durationSecs * 1000);
 
-           const newRound = { letter: getUnusedLetter(usedLetters), startTime, endTime, answers: {}, scores: {} };
+           const newRound = { letter: getUnusedLetter(usedLetters), durationSecs, answers: {}, scores: {} };
            await updateDoc(roomRef, { status: 'playing', currentRound: data.currentRound + 1, rounds: [...data.rounds, newRound] });
         }
      }
