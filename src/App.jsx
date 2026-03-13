@@ -30,7 +30,6 @@ const db = getFirestore(app);
 const appId = 'isim-sehir-online';
 
 // --- CONSTANTS & CONFIG ---
-// Ğ ile kelime başlamadığı için alfabe ona göre ayarlandı.
 const ALPHABET = "ABCÇDEFGHIİJKLMNOÖPRSŞTUÜVYZ".split("");
 const DEFAULT_CATEGORIES = ["İsim", "Şehir", "Hayvan", "Bitki", "Eşya", "Sanatçı"];
 
@@ -71,6 +70,9 @@ export const playSound = (name) => {
         setTimeout(() => playTone(f, 'square', 0.4, 0.1), i * 120);
       });
       break;
+    case 'error':
+      playTone(150, 'sawtooth', 0.3, 0.1);
+      break;
     default: break;
   }
 };
@@ -92,184 +94,176 @@ const getUnusedLetter = (usedLetters = []) => {
 };
 
 // ==========================================
-// DEVSASA OYUN SÖZLÜĞÜ (KUSURSUS & KAPSAMLI)
+// DEVASA OYUN SÖZLÜĞÜ (KUSURSUZ & KAPSAMLI)
 // ==========================================
 const GAME_DICTIONARY = {
   'İsim': [
-    // A-C
-    'Abbas', 'Abdullah', 'Açelya', 'Adem', 'Adil', 'Adnan', 'Ahmet', 'Ahu', 'Akın', 'Alp', 'Alper', 'Ali', 'Alican', 'Alperen', 'Altay', 'Arda', 'Arif', 'Arzu', 'Aslı', 'Aslıhan', 'Asuman', 'Asya', 'Atakan', 'Atilla', 'Aybike', 'Aycan', 'Ayça', 'Aydan', 'Aydın', 'Ayfer', 'Aykut', 'Ayla', 'Aylin', 'Aysel', 'Aysun', 'Ayşe', 'Ayşegül', 'Ayşen', 'Aytekin', 'Ayten', 'Aziz', 'Azize', 'Azra', 'Alara', 'Aleyna', 'Anıl', 'Ata', 'Asaf',
-    'Bahadır', 'Bahar', 'Banu', 'Baran', 'Barış', 'Başak', 'Batu', 'Batuhan', 'Baturay', 'Bedia', 'Bedirhan', 'Begüm', 'Behzat', 'Belgin', 'Belma', 'Bengü', 'Berat', 'Berfin', 'Beril', 'Berkay', 'Berna', 'Berrak', 'Beste', 'Betül', 'Beyza', 'Bilal', 'Bilge', 'Bircan', 'Birgül', 'Birol', 'Birsen', 'Bora', 'Buğra', 'Buket', 'Bulut', 'Burak', 'Burcu', 'Burçin', 'Burhan', 'Buse', 'Bülent', 'Büşra', 'Bartu', 'Barkın', 'Bade', 'Beren', 'Birce',
-    'Cahit', 'Can', 'Canan', 'Canberk', 'Candan', 'Caner', 'Cansu', 'Cavidan', 'Celal', 'Cem', 'Cemal', 'Cemil', 'Cemile', 'Cemre', 'Cengiz', 'Cenk', 'Ceren', 'Ceyda', 'Ceyhun', 'Ceylan', 'Cihan', 'Cihat', 'Coşkun', 'Cuma', 'Cüneyt', 'Cevdet', 'Cabir', 'Celasun',
-    'Çağatay', 'Çağdaş', 'Çağla', 'Çağlar', 'Çağrı', 'Çetin', 'Çiğdem', 'Çise', 'Çisem', 'Çınar', 'Çilem', 'Çelikel',
-    // D-G
-    'Damla', 'Davut', 'Defne', 'Demet', 'Demir', 'Deniz', 'Derin', 'Derya', 'Destan', 'Devrim', 'Dicle', 'Didem', 'Dilara', 'Dilek', 'Diren', 'Doğa', 'Doğan', 'Doğu', 'Doğukan', 'Dora', 'Doruk', 'Döne', 'Duygu', 'Dila', 'Dilan', 'Devran', 'Daniş', 'Dursun',
-    'Ebru', 'Ece', 'Eda', 'Edip', 'Efe', 'Ege', 'Egemen', 'Ejder', 'Ekrem', 'Ela', 'Elif', 'Elmas', 'Elvan', 'Emin', 'Emine', 'Emir', 'Emirhan', 'Emre', 'Ender', 'Enes', 'Engin', 'Enis', 'Enver', 'Ercan', 'Erciyes', 'Erdal', 'Erdem', 'Erdi', 'Eren', 'Ergin', 'Ergun', 'Erhan', 'Erkan', 'Erol', 'Ersin', 'Ertuğrul', 'Esat', 'Esin', 'Esma', 'Esra', 'Eşref', 'Ethem', 'Evren', 'Evrim', 'Eylem', 'Eylül', 'Ezgi', 'Ertan', 'Erşan', 'Evindar', 'Ensar', 'Elçin', 'Efsun',
-    'Fadime', 'Fahir', 'Fahri', 'Fahriye', 'Faruk', 'Fatih', 'Fatma', 'Fatoş', 'Fazıl', 'Fehmi', 'Ferdi', 'Ferhat', 'Feridun', 'Feriha', 'Ferit', 'Fethiye', 'Fevzi', 'Feyyaz', 'Feyza', 'Fidan', 'Fikret', 'Fikri', 'Fikriye', 'Filiz', 'Firdevs', 'Fuat', 'Fulden', 'Fulya', 'Funda', 'Furkan', 'Funda', 'Feza', 'Ferah',
-    'Galip', 'Gamze', 'Gani', 'Garip', 'Gaye', 'Gazi', 'Gencer', 'Genco', 'Gizem', 'Gonca', 'Gökçe', 'Gökhan', 'Göksel', 'Göksu', 'Göktuğ', 'Gönül', 'Görkem', 'Gözde', 'Gül', 'Gülay', 'Gülbahar', 'Gülcan', 'Gülçin', 'Gülden', 'Gülhan', 'Gülizar', 'Güllü', 'Gülnur', 'Gülşen', 'Gülten', 'Günay', 'Güneş', 'Günhan', 'Güray', 'Gürbüz', 'Gürkan', 'Gürol', 'Gürsel', 'Güven', 'Güzin', 'Gülfem', 'Gülşah', 'Giray', 'Gazanfer',
-    // H-K
-    'Habib', 'Habibe', 'Hacer', 'Hafize', 'Hakan', 'Hakkı', 'Haldun', 'Hale', 'Halil', 'Halim', 'Halime', 'Halis', 'Halit', 'Haluk', 'Hamdi', 'Hami', 'Hamit', 'Handan', 'Hande', 'Hanife', 'Harun', 'Hasan', 'Hasibe', 'Hasret', 'Haşmet', 'Hatice', 'Hayati', 'Haydar', 'Hayrettin', 'Hayri', 'Hayriye', 'Hayrünnisa', 'Hazal', 'Hazar', 'Hediye', 'Hıdır', 'Hıfzı', 'Hicran', 'Hidayet', 'Hikmet', 'Hilal', 'Hilmi', 'Himmet', 'Hira', 'Hulusi', 'Huriye', 'Hurşit', 'Hülya', 'Hüma', 'Hürriyet', 'Hüsamettin', 'Hüseyin', 'Hüsnü', 'Hafsa', 'Hira', 'Halime', 'Hamza',
-    'Ilgaz', 'Irmak', 'Işık', 'Işıl', 'Işılay', 'Itır', 'Ilgın', 'Işıtan',
-    'İbrahim', 'İclal', 'İdris', 'İffet', 'İhsan', 'İkbal', 'İlayda', 'İlhan', 'İlkay', 'İlker', 'İlknur', 'İlyas', 'İmdat', 'İnci', 'İpek', 'İrem', 'İrfan', 'İsa', 'İshak', 'İskender', 'İslam', 'İsmail', 'İsmet', 'İstem', 'İsrafil', 'İzzet', 'İzzettin', 'İlkim', 'İlknur',
-    'Jale', 'Janset', 'Jülide', 'Jale', 'Jeyan', 'Jir',
-    'Kaan', 'Kadir', 'Kadri', 'Kadriye', 'Kağan', 'Kahraman', 'Kamber', 'Kamil', 'Kamile', 'Kamuran', 'Kasım', 'Kaya', 'Kayahan', 'Kazım', 'Kelami', 'Kemal', 'Kenan', 'Kerem', 'Kerim', 'Keriman', 'Kezban', 'Kılıç', 'Kıymet', 'Kibariye', 'Kutay', 'Kutlu', 'Kuzey', 'Kübra', 'Kürşat', 'Kıvanç', 'Koray', 'Korel', 'Kardelen', 'Kader', 'Kudret',
-    // L-O
-    'Lale', 'Lami', 'Lamia', 'Latif', 'Latife', 'Leman', 'Lemide', 'Lerzan', 'Levent', 'Leyla', 'Lütfi', 'Lütfiye', 'Lütfü', 'Lokman', 'Laçin', 'Lara', 'Lidya', 'Lila',
-    'Macit', 'Mahir', 'Mahmut', 'Mahur', 'Makbule', 'Mansur', 'Mazhar', 'Mecit', 'Medine', 'Mehmet', 'Mehtap', 'Melek', 'Melih', 'Meliha', 'Melik', 'Melike', 'Melis', 'Melisa', 'Meltem', 'Memduh', 'Mert', 'Mertcan', 'Merve', 'Meryem', 'Mesut', 'Mete', 'Metehan', 'Metin', 'Mevlüt', 'Meyra', 'Mısra', 'Mihriban', 'Mina', 'Mine', 'Mira', 'Miraç', 'Miray', 'Mithat', 'Mualla', 'Muammer', 'Mucize', 'Muhammed', 'Muhammet', 'Muharrem', 'Muhsin', 'Muhterem', 'Mukadder', 'Mukaddes', 'Murat', 'Musa', 'Mustafa', 'Mutlu', 'Muzaffer', 'Mücella', 'Mücahit', 'Müfit', 'Müge', 'Müjdat', 'Müjde', 'Mükerrem', 'Mükremin', 'Mülayim', 'Mümin', 'Mümine', 'Mümtaz', 'Münerver', 'Münir', 'Münire', 'Müslüm', 'Müşerref', 'Müzeyyen', 'Mirza', 'Miran', 'Mahsun', 'Muhittin', 'Mücahit', 'Melek', 'Makbule', 'Müzeyyen',
-    'Naci', 'Naciye', 'Nadir', 'Nadire', 'Nafiz', 'Nagehan', 'Nahit', 'Nail', 'Naile', 'Naim', 'Naime', 'Nalan', 'Nalın', 'Namık', 'Narin', 'Nasihat', 'Nasip', 'Nasrettin', 'Nazan', 'Nazım', 'Nazif', 'Nazife', 'Nazlı', 'Nazmi', 'Nazmiye', 'Nebi', 'Nebahat', 'Nebil', 'Nebile', 'Necati', 'Necla', 'Necmettin', 'Necmi', 'Necmiye', 'Nedim', 'Nedime', 'Nehir', 'Nejat', 'Nejla', 'Nergis', 'Nermin', 'Nesim', 'Nesimi', 'Neslihan', 'Nesrin', 'Neşe', 'Neşet', 'Nevin', 'Nevzat', 'Nezahat', 'Nezih', 'Nezihe', 'Nida', 'Nihal', 'Nihan', 'Nihat', 'Nil', 'Nilay', 'Nilgün', 'Nilüfer', 'Nimet', 'Nisa', 'Nisan', 'Niyazi', 'Nizamettin', 'Numan', 'Nur', 'Nural', 'Nuran', 'Nuray', 'Nurcan', 'Nurdan', 'Nurgül', 'Nurhan', 'Nuri', 'Nuriye', 'Nursel', 'Nursen', 'Nurten', 'Nusret', 'Neval', 'Nurullah', 'Nazif',
-    'Oğuz', 'Oğuzhan', 'Okan', 'Okay', 'Oktay', 'Olcay', 'Onur', 'Orhan', 'Orçun', 'Osman', 'Oya', 'Ozan', 'Orkun', 'Oytun', 'Ogün', 'Omay', 'Okyanus',
-    'Öcal', 'Öge', 'Ömer', 'Ömür', 'Önder', 'Öner', 'Övünç', 'Öykü', 'Özay', 'Özcan', 'Özden', 'Özer', 'Özge', 'Özgür', 'Özhan', 'Özkan', 'Özlem', 'Özlen', 'Özüm', 'Özkan', 'Özgen', 'Özbey', 'Özbil',
-    // P-S
-    'Pamir', 'Pars', 'Paşa', 'Pekcan', 'Peker', 'Pelin', 'Pelinsu', 'Perihan', 'Perran', 'Pervin', 'Petek', 'Pınar', 'Piraye', 'Polat', 'Poyraz', 'Püren', 'Pelin', 'Pakize', 'Polat',
-    'Rabia', 'Raci', 'Rafi', 'Rafet', 'Ragıp', 'Rahim', 'Rahime', 'Rahmi', 'Rahmiye', 'Raif', 'Rakım', 'Ramazan', 'Ramiz', 'Rasim', 'Raşit', 'Rauf', 'Rebia', 'Recep', 'Recai', 'Refik', 'Refika', 'Reha', 'Remzi', 'Remziye', 'Renan', 'Rengin', 'Resul', 'Reşat', 'Reşit', 'Reyhan', 'Rezan', 'Rıdvan', 'Rıfat', 'Rıfkı', 'Rıza', 'Ruhi', 'Ruhan', 'Ruken', 'Ruşen', 'Rüstem', 'Rüya', 'Rüzgar', 'Rojin', 'Roza', 'Rıza', 'Rıdvan', 'Rahşan',
-    'Saadet', 'Sabahattin', 'Saban', 'Sabri', 'Sabriye', 'Sacit', 'Sacide', 'Sadettin', 'Sadık', 'Sadri', 'Sadullah', 'Safa', 'Saffet', 'Sait', 'Sakıp', 'Salih', 'Saliha', 'Salim', 'Salime', 'Sami', 'Samiye', 'Samet', 'Sanberk', 'Sancak', 'Saniye', 'Sarp', 'Savaş', 'Sayan', 'Saygın', 'Seçil', 'Seçkin', 'Seda', 'Sedat', 'Sefa', 'Sefer', 'Seher', 'Selahattin', 'Selami', 'Selçuk', 'Selda', 'Selen', 'Selin', 'Selim', 'Selime', 'Selma', 'Selman', 'Selmin', 'Serap', 'Serdar', 'Seren', 'Serenay', 'Serhat', 'Serkan', 'Sermet', 'Serpil', 'Sertaç', 'Servet', 'Sevda', 'Sevgi', 'Sevil', 'Sevilay', 'Sevim', 'Sevinç', 'Seyfi', 'Seyfettin', 'Seyhan', 'Seyit', 'Sezai', 'Sezgin', 'Sezin', 'Sıla', 'Sıtkı', 'Sırma', 'Sibel', 'Simge', 'Sinan', 'Sinem', 'Soner', 'Songül', 'Su', 'Suat', 'Sude', 'Sudi', 'Sultan', 'Suna', 'Sunay', 'Suriye', 'Suphi', 'Süleyman', 'Sümbül', 'Sümer', 'Sümeyra', 'Sümeyye', 'Süreyya', 'Selinay', 'Semih', 'Serdal', 'Sarp', 'Sarper', 'Sıla', 'Sezgin',
-    'Şaban', 'Şadi', 'Şadiye', 'Şafak', 'Şahap', 'Şahin', 'Şahika', 'Şamil', 'Şaziye', 'Şebnem', 'Şecaattin', 'Şefik', 'Şefika', 'Şehrazat', 'Şehriban', 'Şelale', 'Şemsettin', 'Şemsi', 'Şenol', 'Şenay', 'Şengül', 'Şennur', 'Şeref', 'Şermin', 'Şevket', 'Şevki', 'Şevval', 'Şeyda', 'Şeyma', 'Şinasi', 'Şiir', 'Şimal', 'Şirin', 'Şükran', 'Şükrü', 'Şükriye', 'Şule', 'Şiar', 'Şiyar', 'Şerif', 'Şerife',
-    // T-Z
-    'Taceddin', 'Taci', 'Taha', 'Tahir', 'Tahsin', 'Talat', 'Talha', 'Talu', 'Tamer', 'Tan', 'Taner', 'Tanju', 'Tansel', 'Tansu', 'Tarık', 'Tarkan', 'Taşkın', 'Tayfun', 'Tayfur', 'Taylan', 'Tayyar', 'Tayyip', 'Tebessüm', 'Tecer', 'Tekin', 'Teksen', 'Temel', 'Teoman', 'Tercan', 'Terim', 'Teslime', 'Tevfik', 'Tezcan', 'Tınaz', 'Timur', 'Timuçin', 'Toker', 'Tolga', 'Tolgahan', 'Toprak', 'Toygar', 'Tuba', 'Tufan', 'Tugay', 'Tuğba', 'Tuğçe', 'Tuğkan', 'Tuğra', 'Tuğrul', 'Tuğsan', 'Tuna', 'Tunahan', 'Tuncay', 'Tuncer', 'Tunç', 'Turan', 'Turgay', 'Turgut', 'Turhan', 'Tülay', 'Tülin', 'Türkan', 'Türker', 'Tezel', 'Türkeş', 'Tuğberk', 'Teoman', 'Tolunay',
-    'Ufuk', 'Uğur', 'Uğurcan', 'Ulaş', 'Uluç', 'Ulvi', 'Ulviye', 'Umut', 'Umur', 'Unsur', 'Ural', 'Uraz', 'Utku', 'Uyar', 'Uysal', 'Uzay', 'Uygar', 'Umurbey', 'Umutcan',
-    'Ülker', 'Ülkü', 'Ümit', 'Ümmiye', 'Ümran', 'Ünal', 'Ünlem', 'Ünsal', 'Ünzile', 'Üstün', 'Üzeyir', 'Ülgen', 'Ümmet',
-    'Vahap', 'Vahdet', 'Vahide', 'Vahit', 'Valid', 'Valide', 'Vural', 'Varol', 'Vasfi', 'Vasfiye', 'Vatan', 'Vedat', 'Vefa', 'Vefik', 'Vehbi', 'Veli', 'Verda', 'Veysel', 'Veysi', 'Vicdan', 'Vildan', 'Volkan', 'Vuslat', 'Vakkas', 'Vacip', 'Vera', 'Veda',
-    'Yahya', 'Yakut', 'Yakup', 'Yalçın', 'Yalgın', 'Yalın', 'Yaman', 'Yankı', 'Yasin', 'Yasemin', 'Yaşar', 'Yavuz', 'Yekta', 'Yelda', 'Yeliz', 'Yener', 'Yılmaz', 'Yiğit', 'Yıldırım', 'Yıldız', 'Yonca', 'Yosun', 'Yurdagül', 'Yurdanur', 'Yusuf', 'Yücel', 'Yüksel', 'Yümni', 'Yümniye', 'Yamaç', 'Yalvaç', 'Yarkın', 'Yağız', 'Yağmur', 'Yiğithan',
-    'Zabit', 'Zafer', 'Zahit', 'Zahide', 'Zakir', 'Zaman', 'Zambak', 'Zarife', 'Zehra', 'Zeki', 'Zekiye', 'Zeliha', 'Zerrin', 'Zeycan', 'Zeynep', 'Zeynel', 'Ziya', 'Ziyaret', 'Zübeyde', 'Zühal', 'Zülal', 'Züleyha', 'Zülfikar', 'Zümrüt', 'Zülfü', 'Zahit', 'Ziyafet', 'Zahir'
+    'Abbas', 'Abdi', 'Abdullah', 'Abdurrahman', 'Acar', 'Acun', 'Açelya', 'Adem', 'Adil', 'Adile', 'Adnan', 'Afet', 'Affan', 'Afife', 'Afşin', 'Agah', 'Ahmet', 'Ahu', 'Ajda', 'Akasya', 'Akay', 'Akın', 'Akif', 'Aksel', 'Aktuğ', 'Alaattin', 'Alara', 'Alçin', 'Aleda', 'Alev', 'Aleyna', 'Ali', 'Alican', 'Alihan', 'Alim', 'Alişan', 'Aliye', 'Almira', 'Alp', 'Alparslan', 'Alpay', 'Alper', 'Alperen', 'Altan', 'Altay', 'Altuğ', 'Amine', 'Amir', 'Anıl', 'Aras', 'Arda', 'Arel', 'Arif', 'Arife', 'Armağan', 'Armin', 'Arslan', 'Artun', 'Arzu', 'Asaf', 'Asena', 'Asım', 'Asil', 'Asiye', 'Aslı', 'Aslıhan', 'Asu', 'Asuman', 'Asya', 'Aşkın', 'Ata', 'Ataberk', 'Atagün', 'Atahan', 'Atakan', 'Atalay', 'Ataol', 'Atay', 'Ateş', 'Atıf', 'Atıl', 'Atılgan', 'Atilla', 'Avni', 'Ayaz', 'Aybar', 'Ayberk', 'Aybike', 'Aybüke', 'Ayca', 'Aycan', 'Ayça', 'Aydan', 'Aydın', 'Aydoğan', 'Ayfer', 'Aygül', 'Aygün', 'Ayhan', 'Aykut', 'Ayla', 'Aylin', 'Aynur', 'Ayperi', 'Aysan', 'Aysel', 'Aysu', 'Aysun', 'Ayşe', 'Ayşegül', 'Ayşen', 'Ayşenur', 'Aytekin', 'Ayten', 'Aytuğ', 'Aytunç', 'Azat', 'Azer', 'Aziz', 'Azize', 'Azmi', 'Azra',
+    'Babür', 'Baha', 'Bahadır', 'Bahattin', 'Bahar', 'Bahri', 'Bahriye', 'Bahtiyar', 'Baki', 'Banu', 'Baran', 'Baray', 'Barbaros', 'Barın', 'Barış', 'Barkan', 'Barlas', 'Bartu', 'Basri', 'Başak', 'Başar', 'Batıkan', 'Batu', 'Batuhan', 'Batur', 'Baturay', 'Baykal', 'Bayram', 'Bedia', 'Bedir', 'Bedirhan', 'Bedri', 'Bedriye', 'Begüm', 'Behçet', 'Behiç', 'Behiye', 'Behlül', 'Behzat', 'Bekir', 'Belgin', 'Belkıs', 'Belma', 'Benan', 'Bengi', 'Bengisu', 'Bengü', 'Bennu', 'Berat', 'Beren', 'Berfin', 'Berfu', 'Beril', 'Berk', 'Berkan', 'Berkant', 'Berkay', 'Berke', 'Berkin', 'Berna', 'Berrak', 'Berrin', 'Besim', 'Beste', 'Beşir', 'Betül', 'Beyhan', 'Beyza', 'Bilal', 'Bilge', 'Bilgehan', 'Bilgen', 'Bilgütay', 'Billur', 'Binnaz', 'Binnur', 'Bircan', 'Birce', 'Birgül', 'Birol', 'Birsen', 'Bora', 'Boran', 'Bozkurt', 'Böğrü', 'Buğra', 'Buğrahan', 'Buket', 'Bulut', 'Bumin', 'Burak', 'Burcu', 'Burçin', 'Burhan', 'Burhanettin', 'Buse', 'Bülent', 'Bünyamin', 'Büşra',
+    'Cabir', 'Cahit', 'Can', 'Canan', 'Cana', 'Canberk', 'Candan', 'Caner', 'Cankut', 'Cansu', 'Cansel', 'Cavit', 'Cavidan', 'Celal', 'Celalettin', 'Celasun', 'Celil', 'Cem', 'Cemal', 'Cemalettin', 'Cemil', 'Cemile', 'Cemre', 'Cenap', 'Cengiz', 'Cengizhan', 'Cenk', 'Ceren', 'Cevahir', 'Cevat', 'Cevdet', 'Ceyda', 'Ceyhun', 'Ceylan', 'Ceylin', 'Cihan', 'Cihangir', 'Cihat', 'Civan', 'Coşkun', 'Cuma', 'Cumali', 'Cumbul', 'Cüneyt',
+    'Çağatay', 'Çağdaş', 'Çağla', 'Çağlar', 'Çağrı', 'Çakır', 'Çapan', 'Çelebi', 'Çelik', 'Çetin', 'Çevik', 'Çıdam', 'Çınar', 'Çiğdem', 'Çilem', 'Çise', 'Çisem', 'Çisil', 'Çolpan', 'Çöteli',
+    'Dağhan', 'Daha', 'Dahi', 'Dalan', 'Damla', 'Daniş', 'Dara', 'Davut', 'Defne', 'Değer', 'Deha', 'Demet', 'Demir', 'Demirhan', 'Deniz', 'Derin', 'Derman', 'Derya', 'Destan', 'Deste', 'Devran', 'Devrim', 'Dicle', 'Didem', 'Dila', 'Dilan', 'Dilara', 'Dilay', 'Dilek', 'Dilhan', 'Diler', 'Dilsaz', 'Dinç', 'Dinçer', 'Diren', 'Direnç', 'Doğa', 'Doğan', 'Doğanay', 'Doğu', 'Doğukan', 'Doğuş', 'Dora', 'Doruk', 'Dorukhan', 'Döndü', 'Döne', 'Duhan', 'Dursun', 'Durdu', 'Durmuş', 'Duygu', 'Dünya', 'Dürdane', 'Düş',
+    'Ebru', 'Ebubekir', 'Ece', 'Ecem', 'Ecemnur', 'Ecenaz', 'Eda', 'Edanur', 'Edhem', 'Edip', 'Efe', 'Efecan', 'Efehan', 'Efekan', 'Efsun', 'Ege', 'Egemen', 'Ejder', 'Ekrem', 'Ela', 'Elanur', 'Elçin', 'Elif', 'Elmas', 'Elvan', 'Emel', 'Emin', 'Emine', 'Emir', 'Emircan', 'Emirhan', 'Emrah', 'Emre', 'Emrullah', 'Ender', 'Enes', 'Engin', 'Enis', 'Ensar', 'Enver', 'Eralp', 'Eray', 'Erbatur', 'Erbil', 'Ercan', 'Ercüment', 'Erciyes', 'Erdal', 'Erdem', 'Erden', 'Erdi', 'Erdinç', 'Eren', 'Erenay', 'Ergin', 'Ergun', 'Ergüder', 'Ergül', 'Ergün', 'Erhan', 'Erim', 'Erimşah', 'Eriş', 'Erkan', 'Erkin', 'Erman', 'Erol', 'Erşan', 'Ersin', 'Ertan', 'Ertuğrul', 'Esad', 'Esat', 'Esen', 'Eser', 'Esin', 'Esma', 'Esmanur', 'Esra', 'Eşref', 'Etem', 'Ethem', 'Evindar', 'Evren', 'Evrim', 'Eylem', 'Eylül', 'Eyüp', 'Ezgi',
+    'Fadime', 'Fahir', 'Fahrettin', 'Fahri', 'Fahriye', 'Faik', 'Fakir', 'Faruk', 'Fatih', 'Fatma', 'Fatmanur', 'Fatoş', 'Fazıl', 'Fazilet', 'Fehmi', 'Felek', 'Feramuz', 'Feray', 'Ferda', 'Ferdi', 'Ferhan', 'Ferhat', 'Ferhunde', 'Feridun', 'Feriha', 'Ferit', 'Ferruh', 'Fethiye', 'Fevzi', 'Fevziye', 'Feyyaz', 'Feyza', 'Feza', 'Fidan', 'Figen', 'Fikret', 'Fikri', 'Fikriye', 'Filiz', 'Firdevs', 'Fuat', 'Fulden', 'Fulya', 'Funda', 'Furkan',
+    'Gaffar', 'Gaffur', 'Galip', 'Gamze', 'Gani', 'Garip', 'Gaye', 'Gazanfer', 'Gazi', 'Gediz', 'Gencer', 'Genco', 'Gevher', 'Geylani', 'Gıyasettin', 'Giray', 'Gizem', 'Gonca', 'Gökberk', 'Gökcan', 'Gökçe', 'Gökçen', 'Gökhan', 'Göksel', 'Göksu', 'Göktuğ', 'Gönenç', 'Gönül', 'Görkem', 'Gözde', 'Gül', 'Gülay', 'Gülbahar', 'Gülben', 'Gülcan', 'Gülce', 'Gülçin', 'Gülden', 'Güleser', 'Gülfem', 'Gülhan', 'Gülhanım', 'Gülizar', 'Güllü', 'Gülnaz', 'Gülnihal', 'Gülnur', 'Gülşah', 'Gülşen', 'Gülten', 'Gün', 'Günal', 'Günay', 'Günden', 'Gündüz', 'Güneş', 'Güney', 'Günhan', 'Günnur', 'Güray', 'Gürbüz', 'Gürcan', 'Gürkan', 'Gürol', 'Gürsel', 'Güven', 'Güvenç', 'Güzide', 'Güzin',
+    'Habib', 'Habibe', 'Habil', 'Hacer', 'Hafize', 'Hafsa', 'Hakan', 'Hakkı', 'Haldun', 'Hale', 'Halid', 'Halil', 'Halim', 'Halime', 'Halis', 'Halit', 'Haluk', 'Hamdi', 'Hamdiye', 'Hami', 'Hamit', 'Hamza', 'Handan', 'Hande', 'Hanife', 'Harun', 'Hasan', 'Hasibe', 'Hasret', 'Haşmet', 'Hatice', 'Hatem', 'Hayati', 'Haydar', 'Hayrettin', 'Hayri', 'Hayriye', 'Hayrünnisa', 'Hazal', 'Hazar', 'Hazım', 'Hediye', 'Hıdır', 'Hıfzı', 'Hicran', 'Hidayet', 'Hikmet', 'Hilal', 'Hilmi', 'Hilmiye', 'Himmet', 'Hira', 'Hiranur', 'Hulki', 'Hulusi', 'Huri', 'Huriye', 'Hurşit', 'Hülya', 'Hüma', 'Hümeyra', 'Hür', 'Hürkan', 'Hürrem', 'Hürriyet', 'Hüsamettin', 'Hüseyin', 'Hüsnü', 'Hüsniye', 'Hüsran',
+    'Ilgaz', 'Ilgın', 'Irak', 'Irmak', 'Işık', 'Işıl', 'Işılay', 'Işıltı', 'Işıtan', 'Itır', 'Itri',
+    'İbrahim', 'İclal', 'İçim', 'İdil', 'İdris', 'İffet', 'İhsan', 'İkbal', 'İlayda', 'İlber', 'İlbey', 'İlhami', 'İlhan', 'İlkay', 'İlke', 'İlker', 'İlkim', 'İlknur', 'İlkyaz', 'İlyas', 'İmdat', 'İnanç', 'İnci', 'İncilay', 'İpek', 'İrem', 'İrfan', 'İsa', 'İshak', 'İskender', 'İslam', 'İsmail', 'İsmet', 'İstem', 'İstemi', 'İsrafil', 'İşcan', 'İzel', 'İzzet', 'İzzettin',
+    'Jale', 'Janset', 'Jeyan', 'Jir', 'Jülide',
+    'Kaan', 'Kabel', 'Kader', 'Kadife', 'Kadir', 'Kadri', 'Kadriye', 'Kağan', 'Kahraman', 'Kamber', 'Kamil', 'Kamile', 'Kamuran', 'Kansu', 'Kaplan', 'Karaca', 'Karahan', 'Kardelen', 'Karmen', 'Kasım', 'Kaya', 'Kayahan', 'Kayıhan', 'Kazım', 'Kelami', 'Kemal', 'Kemalettin', 'Kenan', 'Kerem', 'Kerim', 'Keriman', 'Kezban', 'Kılıç', 'Kıvanç', 'Kıvılcım', 'Kıymet', 'Kibariye', 'Kiper', 'Koray', 'Korel', 'Korhan', 'Korkut', 'Kudret', 'Kumru', 'Kuntay', 'Kurtuluş', 'Kutay', 'Kutlay', 'Kutlu', 'Kutsal', 'Kutsi', 'Kuzey', 'Kübra', 'Kürşad', 'Kürşat',
+    'Laçin', 'Lale', 'Lami', 'Lamia', 'Lara', 'Latif', 'Latife', 'Leda', 'Leman', 'Lemide', 'Lerzan', 'Levent', 'Leyla', 'Lidya', 'Lila', 'Linet', 'Lokman', 'Lütfi', 'Lütfiye', 'Lütfü',
+    'Macit', 'Mahir', 'Mahmut', 'Mahsun', 'Mahur', 'Makbule', 'Manolya', 'Mansur', 'Mazhar', 'Mecit', 'Medine', 'Mefa', 'Mehir', 'Mehmet', 'Mehtap', 'Mekin', 'Melda', 'Melek', 'Melih', 'Meliha', 'Melik', 'Melike', 'Melis', 'Melisa', 'Melodi', 'Meltem', 'Memduh', 'Menderes', 'Menduh', 'Mengü', 'Meral', 'Meriç', 'Meriçhan', 'Merih', 'Mert', 'Mertcan', 'Merve', 'Meryem', 'Mesut', 'Mete', 'Metehan', 'Metin', 'Mevlüt', 'Meyra', 'Mısra', 'Mihriban', 'Mina', 'Mine', 'Mira', 'Miraç', 'Miran', 'Miray', 'Mirkelam', 'Mirza', 'Misak', 'Mithat', 'Mualla', 'Muammer', 'Mucize', 'Muhammed', 'Muhammet', 'Muharrem', 'Muhittin', 'Muhsin', 'Muhterem', 'Mukadder', 'Mukaddes', 'Murat', 'Musa', 'Mustafa', 'Mutlu', 'Muzaffer', 'Mücella', 'Mücahit', 'Müesser', 'Müfit', 'Müge', 'Müjdat', 'Müjde', 'Mükerrem', 'Mükremin', 'Mülayim', 'Mümin', 'Mümine', 'Mümtaz', 'Münerver', 'Münir', 'Münire', 'Müslüm', 'Müşerref', 'Müşfik', 'Müzeyyen',
+    'Naci', 'Naciye', 'Nadir', 'Nadire', 'Nafiz', 'Nagehan', 'Nahit', 'Nail', 'Naile', 'Naim', 'Naime', 'Nalan', 'Nalın', 'Namık', 'Narin', 'Nasihat', 'Nasip', 'Nasrettin', 'Nazan', 'Nazım', 'Nazif', 'Nazife', 'Nazlı', 'Nazmi', 'Nazmiye', 'Nebi', 'Nebahat', 'Nebil', 'Nebile', 'Necati', 'Necla', 'Necmettin', 'Necmi', 'Necmiye', 'Nedim', 'Nedime', 'Nehir', 'Nejat', 'Nejla', 'Nergis', 'Nermin', 'Nesim', 'Nesimi', 'Neslihan', 'Nesrin', 'Neşe', 'Neşet', 'Neval', 'Nevin', 'Nevzat', 'Nezahat', 'Nezih', 'Nezihe', 'Nida', 'Nigar', 'Nihal', 'Nihan', 'Nihat', 'Nil', 'Nilay', 'Nilgün', 'Nilüfer', 'Nimet', 'Nisa', 'Nisan', 'Nisanur', 'Niyazi', 'Nizamettin', 'Noyan', 'Numan', 'Nur', 'Nural', 'Nuran', 'Nuray', 'Nurcan', 'Nurdan', 'Nurgül', 'Nurhan', 'Nuri', 'Nuriye', 'Nursel', 'Nursen', 'Nurten', 'Nurullah', 'Nusret',
+    'Oğuz', 'Oğuzhan', 'Okan', 'Okay', 'Oktay', 'Okşan', 'Okyanus', 'Olcay', 'Olgay', 'Olgun', 'Omay', 'Ömür', 'Onur', 'Oray', 'Orçun', 'Orhan', 'Orkun', 'Osman', 'Oya', 'Oytun', 'Ozan',
+    'Öcal', 'Ödemiş', 'Öge', 'Ögeday', 'Ökkeş', 'Ömer', 'Ömür', 'Önder', 'Öner', 'Övünç', 'Öykü', 'Özay', 'Özbey', 'Özbil', 'Özcan', 'Özden', 'Özdil', 'Özer', 'Özge', 'Özgen', 'Özgül', 'Özgür', 'Özhan', 'Özkan', 'Özlem', 'Özlen', 'Özüm',
+    'Pakize', 'Pamir', 'Pars', 'Paşa', 'Pekcan', 'Peker', 'Pelin', 'Pelinsu', 'Pembe', 'Perihan', 'Perran', 'Pervin', 'Petek', 'Pınar', 'Piraye', 'Polat', 'Poyraz', 'Püren', 'Pürtelaş',
+    'Rabia', 'Raci', 'Rafi', 'Rafet', 'Ragıp', 'Rahim', 'Rahime', 'Rahmi', 'Rahmiye', 'Rahşan', 'Raif', 'Rakım', 'Ramazan', 'Ramiz', 'Rasim', 'Raşit', 'Rauf', 'Rebia', 'Recep', 'Recai', 'Refik', 'Refika', 'Reha', 'Remzi', 'Remziye', 'Renan', 'Rengin', 'Resul', 'Reşat', 'Reşit', 'Reyhan', 'Rezan', 'Rıdvan', 'Rıfat', 'Rıfkı', 'Rıza', 'Rojin', 'Roza', 'Ruhi', 'Ruhan', 'Ruken', 'Ruşen', 'Rüstem', 'Rüştü', 'Rüya', 'Rüzgar',
+    'Saadet', 'Sabahattin', 'Saban', 'Sabri', 'Sabriye', 'Sacit', 'Sacide', 'Sadettin', 'Sadık', 'Sadri', 'Sadullah', 'Safa', 'Saffet', 'Sait', 'Sakıp', 'Salih', 'Saliha', 'Salim', 'Salime', 'Sami', 'Samiye', 'Samet', 'Sanberk', 'Sancak', 'Saniye', 'Sarp', 'Sarper', 'Savaş', 'Sayan', 'Saygın', 'Seçil', 'Seçkin', 'Seda', 'Sedat', 'Sefa', 'Sefer', 'Seher', 'Selahattin', 'Selami', 'Selçuk', 'Selda', 'Selen', 'Selin', 'Selinay', 'Selim', 'Selime', 'Selma', 'Selman', 'Selmin', 'Semih', 'Serap', 'Serdal', 'Serdar', 'Seren', 'Serenay', 'Serhat', 'Serkan', 'Sermet', 'Serpil', 'Sertaç', 'Servet', 'Sevda', 'Sevgi', 'Sevil', 'Sevilay', 'Sevim', 'Sevinç', 'Seyfi', 'Seyfettin', 'Seyhan', 'Seyit', 'Sezai', 'Sezgin', 'Sezin', 'Sıla', 'Sıtkı', 'Sırma', 'Sibel', 'Simge', 'Sinan', 'Sinem', 'Soner', 'Songül', 'Su', 'Suat', 'Sude', 'Sudi', 'Sultan', 'Suna', 'Sunay', 'Suriye', 'Suphi', 'Süleyman', 'Sümbül', 'Sümer', 'Sümeyra', 'Sümeyye', 'Süreyya',
+    'Şaban', 'Şadi', 'Şadiye', 'Şafak', 'Şahap', 'Şahin', 'Şahika', 'Şamil', 'Şaziye', 'Şebnem', 'Şecaattin', 'Şefik', 'Şefika', 'Şehrazat', 'Şehriban', 'Şelale', 'Şemsettin', 'Şemsi', 'Şenol', 'Şenay', 'Şengül', 'Şennur', 'Şeref', 'Şerif', 'Şerife', 'Şermin', 'Şevket', 'Şevki', 'Şevval', 'Şeyda', 'Şeyma', 'Şiar', 'Şinasi', 'Şiir', 'Şimal', 'Şirin', 'Şiyar', 'Şükran', 'Şükrü', 'Şükriye', 'Şule',
+    'Taceddin', 'Taci', 'Taha', 'Tahir', 'Tahsin', 'Talat', 'Talha', 'Talu', 'Tamer', 'Tan', 'Taner', 'Tanju', 'Tansel', 'Tansu', 'Tarık', 'Tarkan', 'Taşkın', 'Tayfun', 'Tayfur', 'Taylan', 'Tayyar', 'Tayyip', 'Tebessüm', 'Tecer', 'Tekin', 'Teksen', 'Temel', 'Teoman', 'Tercan', 'Terim', 'Teslime', 'Tevfik', 'Tezcan', 'Tezel', 'Tınaz', 'Timur', 'Timuçin', 'Toker', 'Tolga', 'Tolgahan', 'Tolunay', 'Toprak', 'Toygar', 'Tuba', 'Tufan', 'Tugay', 'Tuğba', 'Tuğberk', 'Tuğçe', 'Tuğkan', 'Tuğra', 'Tuğrul', 'Tuğsan', 'Tuna', 'Tunahan', 'Tuncay', 'Tuncer', 'Tunç', 'Turan', 'Turgay', 'Turgut', 'Turhan', 'Tülay', 'Tülin', 'Türkan', 'Türker', 'Türkeş',
+    'Ufuk', 'Uğur', 'Uğurcan', 'Ulaş', 'Uluç', 'Ulvi', 'Ulviye', 'Umur', 'Umurbey', 'Umut', 'Umutcan', 'Unsur', 'Ural', 'Uraz', 'Utku', 'Uygar', 'Uyar', 'Uysal', 'Uzay',
+    'Ülgen', 'Ülker', 'Ülkü', 'Ümmet', 'Ümit', 'Ümmiye', 'Ümran', 'Ünal', 'Ünlem', 'Ünsal', 'Ünzile', 'Üstün', 'Üzeyir',
+    'Vacip', 'Vahap', 'Vahdet', 'Vahide', 'Vahit', 'Vakkas', 'Valid', 'Valide', 'Varol', 'Vasfi', 'Vasfiye', 'Vatan', 'Veda', 'Vedat', 'Vefa', 'Vefik', 'Vehbi', 'Veli', 'Vera', 'Verda', 'Veysel', 'Veysi', 'Vicdan', 'Vildan', 'Volkan', 'Vural', 'Vuslat',
+    'Yağız', 'Yağmur', 'Yahya', 'Yakut', 'Yakup', 'Yalçın', 'Yalgın', 'Yalın', 'Yalvaç', 'Yaman', 'Yamaç', 'Yankı', 'Yarkın', 'Yasin', 'Yasemin', 'Yaşar', 'Yavuz', 'Yekta', 'Yelda', 'Yeliz', 'Yener', 'Yılmaz', 'Yiğit', 'Yiğithan', 'Yıldırım', 'Yıldız', 'Yonca', 'Yosun', 'Yurdagül', 'Yurdanur', 'Yusuf', 'Yücel', 'Yüksel', 'Yümni', 'Yümniye',
+    'Zabit', 'Zafer', 'Zahir', 'Zahit', 'Zahide', 'Zakir', 'Zaman', 'Zambak', 'Zarife', 'Zehra', 'Zeki', 'Zekiye', 'Zeliha', 'Zerrin', 'Zeycan', 'Zeynep', 'Zeynel', 'Ziya', 'Ziyafet', 'Ziyaret', 'Zübeyde', 'Zühal', 'Zülal', 'Züleyha', 'Zülfikar', 'Zülfü', 'Zümrüt'
   ],
   'Şehir': [
     'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman', 'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ', 'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 'Hatay', 'Iğdır', 'Isparta', 'İstanbul', 'İzmir', 'Kahramanmaraş', 'Karabük', 'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir', 'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin', 'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon', 'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
   ],
   'Hayvan': [
-    'Ahtapot', 'Ağaçkakan', 'Akrep', 'Akbaba', 'Ala Geyik', 'Alpaka', 'Anakonda', 'Antilop', 'Arı', 'Aslan', 'At', 'Ayı', 'Aygır', 'Armadillo', 'Alabalık', 'Atmaca', 'Ateşböceği', 'Albatros', 'Ağustos Böceği',
-    'Babun', 'Balina', 'Balık', 'Bukalemun', 'Bülbül', 'Böcek', 'Boğa', 'Baykuş', 'Bizon', 'Boa', 'Bıldırcın', 'Böğü', 'Boğa Yılanı', 'Bit',
-    'Ceylan', 'Cırcır Böceği', 'Cennet Kuşu', 'Civciv', 'Cennet Papağanı', 'Cıvık Mantar (Hayvansal)', 'Camgöz',
-    'Çakal', 'Çıngıraklı Yılan', 'Çekirge', 'Çita', 'Çulluk', 'Çamurcun', 'Çaylak', 'Çipura',
-    'Dana', 'Deve', 'Devekuşu', 'Denizanası', 'Denizatı', 'Dinozor', 'Domuz', 'Dodo', 'Doğan', 'Deniz Aslanı', 'Deniz İneği', 'Deniz Kaplumbağası', 'Deniz Yıldızı', 'Dülger Balığı',
-    'Eşek', 'Engerek', 'Eşek Arısı', 'Etiyopya Kurdu', 'Emu',
-    'Fanus Balığı', 'Fare', 'Fil', 'Flamingo', 'Fok', 'Fırkateyn Kuşu',
-    'Gelincik', 'Gergedan', 'Geyik', 'Goril', 'Göçmen Kuş', 'Güvercin', 'Guguk Kuşu', 'Gümüş Balığı', 'Geyik Böceği', 'Gökdoğn', 'Gül Kurbağası',
-    'Hamamböceği', 'Hamsi', 'Hindi', 'Hipopotam', 'Horoz', 'Hörgüçlü Deve', 'Hani Balığı', 'Himalaya Kurdu', 'Hamster',
-    'Iguana', 'Istakoz', 'İnek', 'İguana', 'İpekböceği', 'İstavrit', 'İstiridye', 'İguana', 'İmpala', 'İspinoz', 'İstiridye', 'İskorpit',
-    'Jaguar', 'Jako Papağanı', 'Japon Balığı', 'Jelatin Balığı',
-    'Kaplan', 'Kangal', 'Kanarya', 'Kaplumbağa', 'Karınca', 'Karga', 'Kartal', 'Katır', 'Kaz', 'Kedi', 'Kelebek', 'Kertenkele', 'Kırlangıç', 'Kirpi', 'Koala', 'Kobra', 'Koç', 'Koyun', 'Köpek', 'Köpekbalığı', 'Köstebek', 'Kurbağa', 'Kurt', 'Kuş', 'Kuzgun', 'Kuzu', 'Kirpi Balığı', 'Kalkan Balığı', 'Karabatak', 'Karagöz', 'Kunduz',
-    'Lama', 'Leopar', 'Leylek', 'Levrek', 'Lüfer', 'Lepistes', 'Lemur', 'Loris', 'Lir Kuşu',
-    'Manda', 'Martı', 'Maymun', 'Mezgit', 'Midilli', 'Midye', 'Mors', 'Mürekkepbalığı', 'Mırmır', 'Mersin Balığı', 'Mamut', 'Makağı', 'Mavi Balina',
-    'Nandu', 'Narval', 'Nehir Yunusu',
-    'Oğlak', 'Okapi', 'Orangutan', 'Orkinos', 'Ornitorenk', 'Oryx', 'Ocelot',
-    'Ördek', 'Örümcek', 'Öküz', 'Ötleğen',
-    'Palamut', 'Panda', 'Panter', 'Papağan', 'Pelikan', 'Penguen', 'Piton', 'Puma', 'Porsuk', 'Pire', 'Pisi Balığı', 'Puhu', 'Pars',
+    'Ahtapot', 'Ağaçkakan', 'Akrep', 'Akbaba', 'Ala Geyik', 'Alpaka', 'Anakonda', 'Antilop', 'Arı', 'Aslan', 'At', 'Ayı', 'Aygır', 'Armadillo', 'Alabalık', 'Atmaca', 'Ateşböceği', 'Albatros', 'Ağustos Böceği', 'Anaconda', 'Angut', 'Arıkuşu',
+    'Babun', 'Balina', 'Balık', 'Bukalemun', 'Bülbül', 'Böcek', 'Boğa', 'Baykuş', 'Bizon', 'Boa', 'Bıldırcın', 'Böğü', 'Boğa Yılanı', 'Bit', 'Bokböceği', 'Bozayı', 'Barbun', 'Balerin Balığı',
+    'Ceylan', 'Cırcır Böceği', 'Cennet Kuşu', 'Civciv', 'Cennet Papağanı', 'Camgöz', 'Cennetbalığı', 'Cırcır',
+    'Çakal', 'Çıngıraklı Yılan', 'Çekirge', 'Çita', 'Çulluk', 'Çamurcun', 'Çaylak', 'Çipura', 'Çaprazgaga', 'Çizgili Sincap',
+    'Dana', 'Deve', 'Devekuşu', 'Denizanası', 'Denizatı', 'Dinozor', 'Domuz', 'Dodo', 'Doğan', 'Deniz Aslanı', 'Deniz İneği', 'Deniz Kaplumbağası', 'Deniz Yıldızı', 'Dülger Balığı', 'Dingo', 'Dağ Keçisi', 'Dikenli Karıncayiyen',
+    'Eşek', 'Engerek', 'Eşek Arısı', 'Etiyopya Kurdu', 'Emu', 'Eğrelti Böceği', 'Ejderha',
+    'Fanus Balığı', 'Fare', 'Fil', 'Flamingo', 'Fok', 'Fırkateyn Kuşu', 'Fındık Faresi',
+    'Gelincik', 'Gergedan', 'Geyik', 'Goril', 'Göçmen Kuş', 'Güvercin', 'Guguk Kuşu', 'Gümüş Balığı', 'Geyik Böceği', 'Gökdoğan', 'Gül Kurbağası', 'Guanako', 'Ginepig', 'Güneşkuşu',
+    'Hamamböceği', 'Hamsi', 'Hindi', 'Hipopotam', 'Horoz', 'Hörgüçlü Deve', 'Hani Balığı', 'Himalaya Kurdu', 'Hamster', 'Habeş Maymunu', 'Halkalı Solucan',
+    'Iguana', 'Istakoz', 'İnek', 'İguana', 'İpekböceği', 'İstavrit', 'İstiridye', 'İmpala', 'İspinoz', 'İskorpit', 'İbibik', 'İncik',
+    'Jaguar', 'Jako Papağanı', 'Japon Balığı', 'Jelatin Balığı', 'Jaguag', 'Jalapeno Börtüsü',
+    'Kaplan', 'Kangal', 'Kanarya', 'Kaplumbağa', 'Karınca', 'Karga', 'Kartal', 'Katır', 'Kaz', 'Kedi', 'Kelebek', 'Kertenkele', 'Kırlangıç', 'Kirpi', 'Koala', 'Kobra', 'Koç', 'Koyun', 'Köpek', 'Köpekbalığı', 'Köstebek', 'Kurbağa', 'Kurt', 'Kuş', 'Kuzgun', 'Kuzu', 'Kirpi Balığı', 'Kalkan Balığı', 'Karabatak', 'Karagöz', 'Kunduz', 'Karakulak', 'Karıncayiyen', 'Kılıçbalığı', 'Kırlangıçbalığı', 'Kızılcık', 'Kokarca', 'Kudu', 'Kuğu',
+    'Lama', 'Leopar', 'Leylek', 'Levrek', 'Lüfer', 'Lepistes', 'Lemur', 'Loris', 'Lir Kuşu', 'Lagos',
+    'Manda', 'Martı', 'Maymun', 'Mezgit', 'Midilli', 'Midye', 'Mors', 'Mürekkepbalığı', 'Mırmır', 'Mersin Balığı', 'Mamut', 'Makağı', 'Mavi Balina', 'Mercan', 'Mersin', 'Mirket', 'Müren',
+    'Nandu', 'Narval', 'Nehir Yunusu', 'Neon Balığı', 'Nematod',
+    'Oğlak', 'Okapi', 'Orangutan', 'Orkinos', 'Ornitorenk', 'Oryx', 'Ocelot', 'Oklu Kirpi', 'Okyanus Güneşi Balığı',
+    'Ördek', 'Örümcek', 'Öküz', 'Ötleğen', 'Örümcek Maymunu', 'Ökse Kuşu',
+    'Palamut', 'Panda', 'Panter', 'Papağan', 'Pelikan', 'Penguen', 'Piton', 'Puma', 'Porsuk', 'Pire', 'Pisi Balığı', 'Puhu', 'Pars', 'Pangolin', 'Pırpır',
     'Rakun', 'Ren Geyiği', 'Ringa Balığı', 'Rhesus Maymunu',
-    'Salyangoz', 'Saka', 'Samur', 'Sardalya', 'Sazan', 'Serçe', 'Sığır', 'Sincap', 'Sinekkapan', 'Solucan', 'Sırtlan', 'Sinek', 'Sivrisinek', 'Somon', 'Su Aygırı', 'Sülük', 'Sülün', 'Sünger',
-    'Şahin', 'Şempanze', 'Şeritli Yılan', 'Şinşilla',
-    'Tahtakurusu', 'Tarantula', 'Tavşan', 'Tavuk', 'Tavuskuşu', 'Tay', 'Timsah', 'Tırtıl', 'Tilki', 'Turna', 'Tembel Hayvan', 'Teke', 'Tapir', 'Tirsi', 'Tuygun',
-    'Uskumru', 'Uğurböceği', 'Ustura Balığı',
-    'Üveyik', 'Üsküf',
-    'Vatoz', 'Vaşak', 'Vizon', 'Vampir Yarasa', 'Varan',
-    'Yaban Domuzu', 'Yarasa', 'Yılan', 'Yunus', 'Yusufçuk', 'Yengeç', 'Yediuyur', 'Yaban Keçisi', 'Yılan Balığı',
-    'Zebra', 'Zargana', 'Zürafa', 'Zebu', 'Zehirli Ok Kurbağası'
+    'Salyangoz', 'Saka', 'Samur', 'Sardalya', 'Sazan', 'Serçe', 'Sığır', 'Sincap', 'Sinekkapan', 'Solucan', 'Sırtlan', 'Sinek', 'Sivrisinek', 'Somon', 'Su Aygırı', 'Sülük', 'Sülün', 'Sünger', 'Sarı Asma', 'Sibirya Kurdu', 'Su Yılanı',
+    'Şahin', 'Şempanze', 'Şeritli Yılan', 'Şinşilla', 'Şebek',
+    'Tahtakurusu', 'Tarantula', 'Tavşan', 'Tavuk', 'Tavuskuşu', 'Tay', 'Timsah', 'Tırtıl', 'Tilki', 'Turna', 'Tembel Hayvan', 'Teke', 'Tapir', 'Tirsi', 'Tuygun', 'Tasmanian Canavarı', 'Tırtak', 'Turna Balığı',
+    'Uskumru', 'Uğurböceği', 'Ustura Balığı', 'Uçan Balık', 'Uçan Sincap', 'Uçan Fare',
+    'Üveyik', 'Üsküf', 'Üzengi Balığı',
+    'Vatoz', 'Vaşak', 'Vizon', 'Vampir Yarasa', 'Varan', 'Vombat', 'Vicuña',
+    'Yaban Domuzu', 'Yarasa', 'Yılan', 'Yunus', 'Yusufçuk', 'Yengeç', 'Yediuyur', 'Yaban Keçisi', 'Yılan Balığı', 'Yalıçapkını', 'Yaprak Böceği', 'Yassı Solucan',
+    'Zebra', 'Zargana', 'Zürafa', 'Zebu', 'Zehirli Ok Kurbağası', 'Zarkan', 'Zar Kanatlı', 'Zıpzıp'
   ],
   'Bitki': [
-    'Abanoz', 'Acur', 'Açelya', 'Ahududu', 'Ağaç', 'Akasya', 'Akçaağaç', 'Ananas', 'Anason', 'Andız', 'Antepfıstığı', 'Ardıç', 'Armut', 'Arpa', 'Asma', 'Aspir', 'Ayçiçeği', 'Ayva', 'Ay Çiçeği', 'Altınotu', 'Adaçayı', 'Avokado',
-    'Badem', 'Bakla', 'Bambu', 'Bamya', 'Barbunya', 'Begonya', 'Bezelye', 'Biber', 'Biberiye', 'Böğürtlen', 'Brokoli', 'Buğday', 'Burçak', 'Boyboy',
-    'Ceviz', 'Cibes', 'Cıvınotu',
-    'Çalı', 'Çam', 'Çavdar', 'Çay', 'Çınar', 'Çiçek', 'Çiğdem', 'Çilek', 'Çimen', 'Çörekotu', 'Çuha Çiçeği', 'Çam Ağacı',
-    'Defne', 'Dereotu', 'Domates', 'Dut', 'Dulavratotu', 'Deniz Kadayıfı',
-    'Ebegümeci', 'Eğreltiotu', 'Elma', 'Enginar', 'Erik', 'Ekin', 'Eşek Dikeni',
-    'Fasulye', 'Fesleğen', 'Fındık', 'Fıstık', 'Funda', 'Frenk İnciri',
-    'Gül', 'Greyfurt', 'Glayöl', 'Gürgen', 'Gecesefası', 'Ginseng',
-    'Hardal', 'Haşhaş', 'Havuç', 'Hindiba', 'Hindistancevizi', 'Hurma', 'Hanımeli', 'Hasekiküpesi', 'Hodan',
-    'Ihlarmur', 'Ispanak', 'Ilgın', 'Itır',
-    'İğde', 'İncir', 'İğne Yapraklı', 'İnci Çiçeği', 'İrmik',
-    'Jalapeno', 'Jüt', 'Japon Gülü',
-    'Kabak', 'Kahve', 'Kakao', 'Kaktüs', 'Karanfil', 'Karnabahar', 'Karpuz', 'Kavak', 'Kavun', 'Kayısı', 'Kekik', 'Kereviz', 'Kestane', 'Keten', 'Kivi', 'Krizantem', 'Kuşburnu', 'Kayın', 'Kestane', 'Kiraz', 'Kimyon', 'Kişniş', 'Kızılcık',
-    'Lale', 'Lavanta', 'Lahana', 'Limon', 'Leylak', 'Limonotu', 'Ladin',
-    'Mandalina', 'Mantar', 'Manolya', 'Marul', 'Maydanoz', 'Meşe', 'Mısır', 'Muz', 'Menekşe', 'Mimoza', 'Muşmula', 'Mersin', 'Meyan',
-    'Nane', 'Nar', 'Nergis', 'Nohut', 'Nilüfer', 'Nohut',
-    'Orkide', 'Ormangülü', 'Ökseotu', 'Okaliptüs', 'Oğulotu', 'Orkide',
-    'Ökseotu', 'Ödağacı',
-    'Papatya', 'Pamuk', 'Pancar', 'Patates', 'Patlıcan', 'Pelin', 'Pırasa', 'Pirinç', 'Portakal', 'Papatya', 'Papatya', 'Pikan Cevizi', 'Pelinotu',
-    'Reyhan', 'Roka', 'Rezene',
-    'Sardunya', 'Sarımsak', 'Sarmaşık', 'Saz', 'Selvi', 'Söğüt', 'Soğan', 'Soya', 'Sümbül', 'Susam', 'Sedir', 'Semizotu', 'Sumak', 'Safran',
-    'Şeftali', 'Şalgam', 'Şimşir', 'Şakayık', 'Şekerpancarı',
-    'Tarçın', 'Turp', 'Tütün', 'Tere', 'Turunç', 'Tarhun', 'Tirfil',
-    'Urmu', 'Unut Beni',
-    'Üvez', 'Üzüm', 'Üzerlik',
-    'Vişne', 'Vanilya',
-    'Yabanmersini', 'Yosun', 'Yasemin', 'Yulaf', 'Yenibahar', 'Yonca', 'Yıldız Çiçeği',
-    'Zakkum', 'Zambak', 'Zerdali', 'Zeytin', 'Zencefil', 'Zerdeçal', 'Zufa Otu', 'Zemberek', 'Zümrüt Ağacı'
+    'Abanoz', 'Acur', 'Açelya', 'Ahududu', 'Ağaç', 'Akasya', 'Akçaağaç', 'Ananas', 'Anason', 'Andız', 'Antepfıstığı', 'Ardıç', 'Armut', 'Arpa', 'Asma', 'Aspir', 'Ayçiçeği', 'Ayva', 'Ay Çiçeği', 'Altınotu', 'Adaçayı', 'Avokado', 'Ayıkulağı', 'Acıbakla', 'Ayrıkotu', 'Ateşdikeni', 'At Kestanesi',
+    'Badem', 'Bakla', 'Bambu', 'Bamya', 'Barbunya', 'Begonya', 'Bezelye', 'Biber', 'Biberiye', 'Böğürtlen', 'Brokoli', 'Buğday', 'Burçak', 'Boyboy', 'Baldıran', 'Balsıra', 'Bambulotu', 'Bodur Ağaç',
+    'Ceviz', 'Cibes', 'Cıvınotu', 'Civanperçemi', 'Cennet Kuşu Çiçeği', 'Cezayir Menekşesi', 'Ceviz Ağacı',
+    'Çalı', 'Çam', 'Çavdar', 'Çay', 'Çınar', 'Çiçek', 'Çiğdem', 'Çilek', 'Çimen', 'Çörekotu', 'Çuha Çiçeği', 'Çam Ağacı', 'Çoban Çantası', 'Çitlembik', 'Çavşır', 'Çivit', 'Çuha',
+    'Defne', 'Dereotu', 'Domates', 'Dut', 'Dulavratotu', 'Deniz Kadayıfı', 'Diken', 'Dut Ağacı', 'Düğünçiçeği', 'Devedikeni', 'Dar Yapraklı', 'Damkoruğu',
+    'Ebegümeci', 'Eğreltiotu', 'Elma', 'Enginar', 'Erik', 'Ekin', 'Eşek Dikeni', 'Eğrelti', 'Engerek Otu', 'Eşek Marulu',
+    'Fasulye', 'Fesleğen', 'Fındık', 'Fıstık', 'Funda', 'Frenk İnciri', 'Fındık Ağacı', 'Fıstık Çamı', 'Frezya', 'Fırıldak Çiçeği',
+    'Gül', 'Greyfurt', 'Glayöl', 'Gürgen', 'Gecesefası', 'Ginseng', 'Göknar', 'Gladiyöl', 'Gül Ağacı', 'Gelincik', 'Gelinparmağı',
+    'Hardal', 'Haşhaş', 'Havuç', 'Hindiba', 'Hindistancevizi', 'Hurma', 'Hanımeli', 'Hasekiküpesi', 'Hodan', 'Huş Ağacı', 'Hatmi', 'Hıyar',
+    'Ihlarmur', 'Ispanak', 'Ilgın', 'Itır', 'Ihlamur Ağacı', 'Ispanak Otu',
+    'İğde', 'İncir', 'İğne Yapraklı', 'İnci Çiçeği', 'İrmik', 'İnci', 'İğde Ağacı', 'İğneadaotu',
+    'Jalapeno', 'Jüt', 'Japon Gülü', 'Japon Şemsiyesi',
+    'Kabak', 'Kahve', 'Kakao', 'Kaktüs', 'Karanfil', 'Karnabahar', 'Karpuz', 'Kavak', 'Kavun', 'Kayısı', 'Kekik', 'Kereviz', 'Kestane', 'Keten', 'Kivi', 'Krizantem', 'Kuşburnu', 'Kayın', 'Kiraz', 'Kimyon', 'Kişniş', 'Kızılcık', 'Karaağaç', 'Kamkat', 'Kantaron', 'Kanola', 'Karahindiba', 'Kadife Çiçeği', 'Karabiber',
+    'Lale', 'Lavanta', 'Lahana', 'Limon', 'Leylak', 'Limonotu', 'Ladin', 'Lale Devri', 'Liken', 'Limon Ağacı',
+    'Mandalina', 'Mantar', 'Manolya', 'Marul', 'Maydanoz', 'Meşe', 'Mısır', 'Muz', 'Menekşe', 'Mimoza', 'Muşmula', 'Mersin', 'Meyan', 'Mürver', 'Mabet Ağacı', 'Meşe Palamudu', 'Mine Çiçeği',
+    'Nane', 'Nar', 'Nergis', 'Nohut', 'Nilüfer', 'Nane Otu', 'Nar Ağacı', 'Nergis Çiçeği',
+    'Orkide', 'Ormangülü', 'Ökseotu', 'Okaliptüs', 'Oğulotu', 'Otsu', 'Osmanlı Çileği', 'Orakotu', 'Okaliptus Ağacı',
+    'Ökseotu', 'Ödağacı', 'Öd Ağacı', 'Örümcek Otu',
+    'Papatya', 'Pamuk', 'Pancar', 'Patates', 'Patlıcan', 'Pelin', 'Pırasa', 'Pirinç', 'Portakal', 'Pikan Cevizi', 'Pelinotu', 'Porsuk Ağacı', 'Palmiye', 'Peygamber Çiçeği',
+    'Reyhan', 'Roka', 'Rezene', 'Rvent', 'Rambutan', 'Ravend',
+    'Sardunya', 'Sarımsak', 'Sarmaşık', 'Saz', 'Selvi', 'Söğüt', 'Soğan', 'Soya', 'Sümbül', 'Susam', 'Sedir', 'Semizotu', 'Sumak', 'Safran', 'Sarı Papatya', 'Servi', 'Sarı Kantaron', 'Sığla', 'Siklamen',
+    'Şeftali', 'Şalgam', 'Şimşir', 'Şakayık', 'Şekerpancarı', 'Şahtere Otu', 'Şerbetçiotu', 'Şeftali Ağacı',
+    'Tarçın', 'Turp', 'Tütün', 'Tere', 'Turunç', 'Tarhun', 'Tirfil', 'Teber', 'Tamarillo', 'Töngel', 'Trabzon Hurması', 'Turunçgil',
+    'Urmu', 'Unut Beni', 'Unutma Beni Çiçeği', 'Uçkun', 'Uyuzotu',
+    'Üvez', 'Üzüm', 'Üzerlik', 'Üvez Ağacı',
+    'Vişne', 'Vanilya', 'Vapur Dumanı', 'Vişne Ağacı',
+    'Yabanmersini', 'Yosun', 'Yasemin', 'Yulaf', 'Yenibahar', 'Yonca', 'Yıldız Çiçeği', 'Yaban Gülü', 'Yüksükotu', 'Yer Fıstığı', 'Yer Elması',
+    'Zakkum', 'Zambak', 'Zerdali', 'Zeytin', 'Zencefil', 'Zerdeçal', 'Zufa Otu', 'Zemberek', 'Zümrüt Ağacı', 'Zeytin Ağacı', 'Zembil Otu'
   ],
   'Eşya': [
-    'Abajur', 'Adaptör', 'Afiş', 'Ağ', 'Akü', 'Alyans', 'Ampul', 'Anahtar', 'Anfi', 'Anten', 'Araba', 'Atkı', 'Avize', 'Ayna', 'Ayakkabı', 'Ataç', 'Alet Çantası', 'Askı', 'Ayraç', 'Ajanda', 'Ankastre', 'Aspiratör',
-    'Baca', 'Bıçak', 'Balta', 'Bant', 'Bardak', 'Baston', 'Bavul', 'Beşik', 'Bilgisayar', 'Bilezik', 'Biberon', 'Boru', 'Buzdolabı', 'Buzluk', 'Battaniye', 'Bisiklet', 'Bere', 'Banyo Dolabı', 'Bileklik', 'Balon',
-    'Cam', 'Ceket', 'Cep', 'Cetvel', 'Cımbız', 'Cüzdan', 'Cezve', 'Camsil', 'Cıvata', 'Ceviz Kıracağı',
-    'Çadır', 'Çakı', 'Çakmak', 'Çam', 'Çan', 'Çanak', 'Çanta', 'Çapa', 'Çarşaf', 'Çatal', 'Çaydanlık', 'Çekiç', 'Çengel', 'Çerçeve', 'Çivi', 'Çizme', 'Çorap', 'Çuval', 'Çamaşır Makinesi', 'Çöp Kutusu', 'Çengelli İğne', 'Çekyat', 'Çanak Anten',
-    'Daktilo', 'Dambıl', 'Dantel', 'Davul', 'Defter', 'Demir', 'Denge', 'Denizaltı', 'Deterjan', 'Dikiş', 'Direk', 'Dolap', 'Düğme', 'Dürbün', 'Düdük', 'Damlalık', 'Davlumbaz', 'Dekoder', 'Dosya', 'Dikiş Makinesi',
-    'Eldiven', 'Elbise', 'Elek', 'Emzik', 'Etek', 'Eyer', 'Elektrikli Süpürge', 'Ekmek Kızartma Makinesi', 'Eldiven', 'Ekran', 'Ekmeklik',
-    'Fare', 'Fatura', 'Fener', 'Fırça', 'Fırın', 'Fincan', 'Fiş', 'Fıçı', 'Fular', 'Fotoğraf Makinesi', 'Fermuar', 'Fritöz', 'Fosforlu Kalem', 'Fön Makinesi',
-    'Gemi', 'Giysi', 'Gitar', 'Gözlük', 'Gömlek', 'Gümüş', 'Gardırop', 'Gırgır', 'Guguklu Saat', 'Gönye',
-    'Halı', 'Halka', 'Hamak', 'Hançer', 'Harita', 'Havlu', 'Havan', 'Hırka', 'Hoparlör', 'Huni', 'Hortum', 'Hesap Makinesi', 'Hap',
-    'Işık', 'Izgara', 'Isıtıcı', 'Ilıca',
-    'İbrik', 'İğne', 'İlaç', 'İplik', 'İskelet', 'İskemle', 'İp',
-    'Jeton', 'Jile', 'Jilet', 'Jeneratör', 'Jaluzi', 'Jant',
-    'Kablo', 'Kaban', 'Kadeh', 'Kafes', 'Kağıt', 'Kalem', 'Kalkan', 'Kamera', 'Kamyon', 'Kanca', 'Kanepe', 'Kap', 'Kapı', 'Kar', 'Kaşık', 'Kavanoz', 'Kazan', 'Kazak', 'Kazma', 'Keman', 'Kemer', 'Kılıç', 'Kılıf', 'Kilit', 'Kiremit', 'Kitap', 'Klavye', 'Koltuk', 'Kova', 'Kulaklık', 'Kutu', 'Küpe', 'Kürek', 'Kombi', 'Klima', 'Kibrit', 'Kravat', 'Kolye', 'Küvet', 'Kırlent', 'Kumanda',
-    'Lamba', 'Lastik', 'Lavabo', 'Lehim', 'Levha', 'Litre', 'Leğen', 'Lif', 'Limon Sıkacağı', 'Lazer',
-    'Maşa', 'Makas', 'Makara', 'Makyaj', 'Mandal', 'Manto', 'Maske', 'Masa', 'Matara', 'Matkap', 'Mekik', 'Mektup', 'Mendil', 'Merdiven', 'Mermi', 'Metre', 'Mikrofon', 'Minder', 'Motor', 'Mum', 'Musluk', 'Merdane', 'Makine', 'Mont', 'Mangal', 'Mürekkep', 'Mouse',
-    'Nal', 'Naylon', 'Ney', 'Nacak', 'Nargile', 'Neşter', 'Nihavend', 'Nalbant',
-    'Ocak', 'Oje', 'Ok', 'Oklava', 'Olta', 'Orak', 'Oturak', 'Oto', 'Oyun Konsolu', 'Oyuncak', 'Oje',
-    'Ökçe', 'Önlük', 'Örs', 'Örtü', 'Özçekim Çubuğu (Selfie Çubuğu)', 'Örgü Şişi',
-    'Pano', 'Pantolon', 'Paspas', 'Paten', 'Pense', 'Perde', 'Pergel', 'Pervane', 'Pijama', 'Pil', 'Pipo', 'Piyano', 'Priz', 'Pusula', 'Panjur', 'Paket', 'Pusula', 'Pompa', 'Pikçer', 'Pedal', 'Parfüm', 'Peruk',
-    'Radyo', 'Ranza', 'Raptiye', 'Rende', 'Resim', 'Robot', 'Ruj', 'Rulo', 'Röntgen', 'Radyatör', 'Raket', 'Reçete', 'Römork', 'Rimel', 'Rulman',
-    'Saat', 'Sabun', 'Saksı', 'Sandalye', 'Sandık', 'Süpürge', 'Silah', 'Silgi', 'Soba', 'Sokak', 'Süngü', 'Sürahi', 'Şamdan', 'Şapka', 'Şarj', 'Şemsiye', 'Şırınga', 'Şişe', 'Şort', 'Sabunluk', 'Sehpa', 'Süzgeç', 'Saksı', 'Spula', 'Sayaç', 'Soba Borusu',
-    'Şamdan', 'Şapka', 'Şemsiye', 'Şezlong', 'Şişe', 'Şort', 'Şırınga', 'Şömine', 'Şal', 'Şemsiye', 'Şilte', 'Şiş', 'Şofben', 'Şurup',
-    'Tabak', 'Tabanca', 'Tabela', 'Tabure', 'Taç', 'Tarak', 'Tava', 'Tekerlek', 'Telefon', 'Televizyon', 'Tencere', 'Terazi', 'Terlik', 'Testere', 'Testi', 'Teyp', 'Tıraş', 'Toka', 'Top', 'Tornavida', 'Törpü', 'Traktör', 'Tuğla', 'Tuzluk', 'Tablet', 'Termos', 'Tost Makinesi', 'Tıraş Makinesi', 'Tepsi', 'Tutkal',
-    'Uçak', 'Uçurtma', 'Urgan', 'Ustura', 'Uydu', 'Ufo (Isıtıcı)', 'Uç',
-    'Ütü', 'Ütü Masası', 'Üniforma', 'Üreteç', 'Üzengi',
-    'Vagon', 'Valiz', 'Vantilatör', 'Vazo', 'Vida', 'Vinç', 'Vites', 'Voleybol Topu', 'Vurmalı Çalgı', 'Vitrin', 'Vişne Açacağı', 'Vampir Dişi (Oyuncak)',
-    'Yaka', 'Yastık', 'Yatak', 'Yatay', 'Yay', 'Yelken', 'Yorgan', 'Yüzük', 'Yelek', 'Yelpaze', 'Yüksük', 'Yapıştırıcı', 'Yazıcı', 'Yağmurluk',
-    'Zarf', 'Zil', 'Zımba', 'Zincir', 'Zoka', 'Zurna', 'Zemberek', 'Zembil', 'Zıpkın', 'Zigon', 'Zımpara', 'Zırh', 'Zar'
+    'Abajur', 'Adaptör', 'Afiş', 'Ağ', 'Akü', 'Alyans', 'Ampul', 'Anahtar', 'Anfi', 'Anten', 'Araba', 'Atkı', 'Avize', 'Ayna', 'Ayakkabı', 'Ataç', 'Alet Çantası', 'Askı', 'Ayraç', 'Ajanda', 'Ankastre', 'Aspiratör', 'Ateşölçer', 'Ambalaj', 'Ayakkabılık', 'Askılık',
+    'Baca', 'Bıçak', 'Balta', 'Bant', 'Bardak', 'Baston', 'Bavul', 'Beşik', 'Bilgisayar', 'Bilezik', 'Biberon', 'Boru', 'Buzdolabı', 'Buzluk', 'Battaniye', 'Bisiklet', 'Bere', 'Banyo Dolabı', 'Bileklik', 'Balon', 'Baza', 'Bilardo', 'Barkod Okuyucu', 'Bozuk Para', 'Bulaşık Makinesi', 'Büyüteç',
+    'Cam', 'Ceket', 'Cep', 'Cetvel', 'Cımbız', 'Cüzdan', 'Cezve', 'Camsil', 'Cıvata', 'Ceviz Kıracağı', 'CD', 'Cevşen', 'Cam Bezi', 'Cep Telefonu', 'Çorap',
+    'Çadır', 'Çakı', 'Çakmak', 'Çam', 'Çan', 'Çanak', 'Çanta', 'Çapa', 'Çarşaf', 'Çatal', 'Çaydanlık', 'Çekiç', 'Çengel', 'Çerçeve', 'Çivi', 'Çizme', 'Çuval', 'Çamaşır Makinesi', 'Çöp Kutusu', 'Çengelli İğne', 'Çekyat', 'Çanak Anten', 'Çay Bardağı', 'Çay Tabağı', 'Çöp Poşeti', 'Çöpçü', 'Çatı', 'Çapa Makinesi',
+    'Daktilo', 'Dambıl', 'Dantel', 'Davul', 'Defter', 'Demir', 'Denge', 'Denizaltı', 'Deterjan', 'Dikiş', 'Direk', 'Dolap', 'Düğme', 'Dürbün', 'Düdük', 'Damlalık', 'Davlumbaz', 'Dekoder', 'Dosya', 'Dikiş Makinesi', 'Damacana', 'Delgeç', 'Deodorant', 'Diksiyon', 'Disket', 'Dizüstü Bilgisayar', 'Dolma Kalem',
+    'Eldiven', 'Elbise', 'Elek', 'Emzik', 'Etek', 'Eyer', 'Elektrikli Süpürge', 'Ekmek Kızartma Makinesi', 'Ekran', 'Ekmeklik', 'El Feneri', 'Emniyet Kemeri', 'Emaye', 'Eskiz Defteri', 'Eyeliner',
+    'Fare', 'Fatura', 'Fener', 'Fırça', 'Fırın', 'Fincan', 'Fiş', 'Fıçı', 'Fular', 'Fotoğraf Makinesi', 'Fermuar', 'Fritöz', 'Fosforlu Kalem', 'Fön Makinesi', 'Fanus', 'Far', 'Fırın Tepsisi', 'Filtre', 'Flash Bellek', 'Fosfor',
+    'Gemi', 'Giysi', 'Gitar', 'Gözlük', 'Gömlek', 'Gümüş', 'Gardırop', 'Gırgır', 'Guguklu Saat', 'Gönye', 'Gazete', 'Gelinlik', 'Göz Kalemi', 'Gözlük Kılıfı', 'Gramofon', 'Gül Suyu',
+    'Halı', 'Halka', 'Hamak', 'Hançer', 'Harita', 'Havlu', 'Havan', 'Hırka', 'Hoparlör', 'Huni', 'Hortum', 'Hesap Makinesi', 'Hap', 'Halı Saha', 'Hamur Açma Makinesi', 'Hap Kutusu', 'Hasır', 'Havlu Kenarı', 'Havya', 'Hediye Paketi',
+    'Işık', 'Izgara', 'Isıtıcı', 'Ilıca', 'Isıölçer', 'Isıcam',
+    'İbrik', 'İğne', 'İlaç', 'İplik', 'İskelet', 'İskemle', 'İp', 'İlmek', 'İkiz Yatak', 'İmza', 'İngiliz Anahtarı', 'İş Makinesi', 'İşlemci',
+    'Jeton', 'Jile', 'Jilet', 'Jeneratör', 'Jaluzi', 'Jant', 'Jel', 'Joystick', 'Jelatin',
+    'Kablo', 'Kaban', 'Kadeh', 'Kafes', 'Kağıt', 'Kalem', 'Kalkan', 'Kamera', 'Kamyon', 'Kanca', 'Kanepe', 'Kap', 'Kapı', 'Kar', 'Kaşık', 'Kavanoz', 'Kazan', 'Kazak', 'Kazma', 'Keman', 'Kemer', 'Kılıç', 'Kılıf', 'Kilit', 'Kiremit', 'Kitap', 'Klavye', 'Koltuk', 'Kova', 'Kulaklık', 'Kutu', 'Küpe', 'Kürek', 'Kombi', 'Klima', 'Kibrit', 'Kravat', 'Kolye', 'Küvet', 'Kırlent', 'Kumanda', 'Kaşkol', 'Kaset', 'Kartlık', 'Kar Küresi', 'Kalorifer', 'Kalemtraş', 'Kahve Makinesi',
+    'Lamba', 'Lastik', 'Lavabo', 'Lehim', 'Levha', 'Litre', 'Leğen', 'Lif', 'Limon Sıkacağı', 'Lazer', 'Lamba Fanusu', 'Lastik Toka', 'Levye', 'Lale Devri', 'Lipgloss', 'Lojik',
+    'Maşa', 'Makas', 'Makara', 'Makyaj', 'Mandal', 'Manto', 'Maske', 'Masa', 'Matara', 'Matkap', 'Mekik', 'Mektup', 'Mendil', 'Merdiven', 'Mermi', 'Metre', 'Mikrofon', 'Minder', 'Motor', 'Mum', 'Musluk', 'Merdane', 'Makine', 'Mont', 'Mangal', 'Mürekkep', 'Mouse', 'Maket Bıçağı', 'Makine Yağı', 'Makyaj Pamuğu', 'Masa Örtüsü', 'Maşrapa', 'Matbaa Makinesi', 'Matematik', 'Megafon', 'Menengiç', 'Mercek',
+    'Nal', 'Naylon', 'Ney', 'Nacak', 'Nargile', 'Neşter', 'Nihavend', 'Nalbant', 'Namazlık', 'Nazar Boncuğu', 'Navigasyon Cihazı',
+    'Ocak', 'Oje', 'Ok', 'Oklava', 'Olta', 'Orak', 'Oturak', 'Oto', 'Oyun Konsolu', 'Oyuncak', 'Oto Koltuğu', 'Objektif', 'Oda Spreyi', 'Oksijen Tüpü', 'Okul Çantası', 'Oltu Taşı',
+    'Ökçe', 'Önlük', 'Örs', 'Örtü', 'Özçekim Çubuğu', 'Örgü Şişi', 'Ölçü Kabı', 'Öğütücü', 'Ödül', 'Örümcek Ağı',
+    'Pano', 'Pantolon', 'Paspas', 'Paten', 'Pense', 'Perde', 'Pergel', 'Pervane', 'Pijama', 'Pil', 'Pipo', 'Piyano', 'Priz', 'Pusula', 'Panjur', 'Paket', 'Pompa', 'Pikçer', 'Pedal', 'Parfüm', 'Peruk', 'Para', 'Pamuk', 'Papatya', 'Paratoner', 'Perde Kornişi', 'Pet Şişe',
+    'Radyo', 'Ranza', 'Raptiye', 'Rende', 'Resim', 'Robot', 'Ruj', 'Rulo', 'Röntgen', 'Radyatör', 'Raket', 'Reçete', 'Römork', 'Rimel', 'Rulman', 'Radyatör Suyu', 'Raf', 'Rahle', 'Ramp', 'Raptiye Kutusu', 'Rehber',
+    'Saat', 'Sabun', 'Saksı', 'Sandalye', 'Sandık', 'Süpürge', 'Silah', 'Silgi', 'Soba', 'Sokak', 'Süngü', 'Sürahi', 'Şamdan', 'Şapka', 'Şarj', 'Şemsiye', 'Şırınga', 'Şişe', 'Şort', 'Sabunluk', 'Sehpa', 'Süzgeç', 'Spula', 'Sayaç', 'Soba Borusu', 'Sac', 'Samanlık', 'Samur', 'Sarık', 'Sarkaç', 'Sayvan', 'Seccade', 'Sedir', 'Siper', 'Soket',
+    'Şezlong', 'Şömine', 'Şal', 'Şilte', 'Şiş', 'Şofben', 'Şurup', 'Şarj Aleti', 'Şap', 'Şerit Metre', 'Şifoniyer', 'Şişme Bot', 'Şırınga İğnesi',
+    'Tabak', 'Tabanca', 'Tabela', 'Tabure', 'Taç', 'Tarak', 'Tava', 'Tekerlek', 'Telefon', 'Televizyon', 'Tencere', 'Terazi', 'Terlik', 'Testere', 'Testi', 'Teyp', 'Tıraş', 'Toka', 'Top', 'Tornavida', 'Törpü', 'Traktör', 'Tuğla', 'Tuzluk', 'Tablet', 'Termos', 'Tost Makinesi', 'Tıraş Makinesi', 'Tepsi', 'Tutkal', 'Tahta', 'Takvim', 'Tambur', 'Tapan', 'Tapa', 'Tarayıcı', 'Tas', 'Tasma',
+    'Uçak', 'Uçurtma', 'Urgan', 'Ustura', 'Uydu', 'Ufo', 'Uç', 'Uc', 'Uçak Bileti', 'Un', 'Uyku Tulumu', 'Uydu Alıcısı',
+    'Ütü', 'Ütü Masası', 'Üniforma', 'Üreteç', 'Üzengi', 'Üçlü Priz', 'Üfleyici', 'Üst Geçit',
+    'Vagon', 'Valiz', 'Vantilatör', 'Vazo', 'Vida', 'Vinç', 'Vites', 'Voleybol Topu', 'Vurmalı Çalgı', 'Vitrin', 'Vişne Açacağı', 'Vampir Dişi', 'Vapur', 'Varil', 'Vatometre', 'Velet', 'Vestiyer', 'Video',
+    'Yaka', 'Yastık', 'Yatak', 'Yatay', 'Yay', 'Yelken', 'Yorgan', 'Yüzük', 'Yelek', 'Yelpaze', 'Yüksük', 'Yapıştırıcı', 'Yazıcı', 'Yağmurluk', 'Yaba', 'Yağdanlık', 'Yaka İğnesi', 'Yakıt Tankı', 'Yalıtım', 'Yama', 'Yamaç Paraşütü', 'Yastık Kılıfı',
+    'Zarf', 'Zil', 'Zımba', 'Zincir', 'Zoka', 'Zurna', 'Zemberek', 'Zembil', 'Zıpkın', 'Zigon', 'Zımpara', 'Zırh', 'Zar', 'Zarflık', 'Zarf Açacağı', 'Zemberek Taşı', 'Zıbın', 'Zil Teli'
   ],
   'Sanatçı': [
-    'Acun Ilıcalı', 'Adile Naşit', 'Ajda Pekkan', 'Ali Sunal', 'Alişan', 'Altan Erkekli', 'Aras Bulut İynemli', 'Aslı Enver', 'Ata Demirer', 'Aleyna Tilki', 'Ahmet Kaya', 'Ahmet Kural', 'Ayşen Gruda', 'Aylin Aslım', 'Athena Gökhan', 'Aydilge', 'Alpay', 'Arif Sağ', 'Ataol Behramoğlu', 'Avni Dilligil', 'Ayhan Işık', 'Aydemir Akbaş',
-    'Barış Manço', 'Beren Saat', 'Bergüzar Korel', 'Beyazıt Öztürk', 'Burak Özçivit', 'Bülent Ersoy', 'Buray', 'Büşra Pekin', 'Bülent Ortaçgil', 'Bedia Akartürk', 'Belkıs Akkale', 'Burcu Esmersoy', 'Bergen', 'Barış Akarsu', 'Binnur Kaya', 'Bahar Öztan', 'Bülent İnal',
-    'Candan Erçetin', 'Cem Karaca', 'Cem Yılmaz', 'Cüneyt Arkın', 'Çağatay Ulusoy', 'Çetin Tekindor', 'Çağla Şıkel', 'Cem Adrian', 'Cem Belevi', 'Cem Seymen', 'Cemal Hünal', 'Can Bonomo', 'Celil Nalçakan', 'Cansel Elçin', 'Civan Canova', 'Cem Öğretir', 'Coşkun Sabah',
-    'Çolpan İlhan', 'Çiğdem Tunç', 'Çelik', 'Çağlar Ertuğrul', 'Çetin Altan',
-    'Demet Akalın', 'Demet Evgar', 'Demet Akbağ', 'Doğu Demirkol', 'Doğa Rutkay', 'Defne Samyeli', 'Deniz Seki', 'Derya Uluğ', 'Doğuş', 'Duman', 'Demet Sağıroğlu', 'Deniz Uğur', 'Devrim Yakut', 'Deniz Çakır', 'Dilek Türkan',
-    'Ebru Gündeş', 'Edis', 'Engin Akyürek', 'Engin Altan Düzyatan', 'Erol Evgin', 'Eser Yenenler', 'Ezgi Mola', 'Emre Altuğ', 'Emel Sayın', 'Ebru Yaşar', 'Ece Seçkin', 'Emircan İğrek', 'Ekin Uzunlar', 'Erkin Koray', 'Edip Akbayram', 'Erol Büyükburç', 'Ersay Üner', 'Emre Aydın', 'Ebru Şallı', 'Esra Erol', 'Erdal Özyağcılar', 'Ertan Saban', 'Erkan Can', 'Engin Günaydın', 'Erkan Petekkaya',
-    'Fahriye Evcen', 'Fatih Ürek', 'Fatma Girik', 'Ferdi Tayfur', 'Filiz Akın', 'Funda Arar', 'Fatih Erkoç', 'Ferhat Göçer', 'Fırat Tanış', 'Faruk Tınaz', 'Fedon', 'Fikret Kızılok', 'Fatma Turgut', 'Ferhan Şensoy', 'Furkan Andıç',
-    'Gökhan Özoğuz', 'Gökçe Bahadır', 'Gülben Ergen', 'Gülse Birsel', 'Gülşen', 'Gülnaz', 'Gökhan Tepe', 'Gökhan Türkmen', 'Gülşen Bubikoğlu', 'Gönül Yazar', 'Gripin', 'Gülhanım', 'Gupse Özay', 'Gürkan Uygun', 'Gizem Karaca', 'Gökçe', 'Güven Kıraç',
-    'Hadise', 'Halit Ergenç', 'Haluk Bilginer', 'Haluk Levent', 'Hande Erçel', 'Hande Yener', 'Hayko Cepkin', 'Hülya Avşar', 'Hülya Koçyiğit', 'Hakkı Bulut', 'Hakan Altun', 'Hakan Peker', 'Hande Ataizi', 'Hazal Kaya', 'Hümeyra', 'Hüseyin Turan', 'Hakan Taşıyan', 'Halil Sezai', 'Hasan Can Kaya',
-    'Işın Karaca', 'İbrahim Büyükak', 'İbrahim Çelikkol', 'İbrahim Tatlıses', 'İlker Ayrık', 'İlker Kaleli', 'İrem Derici', 'İlyas Yalçıntaş', 'Irmak Arıcı', 'İlhan Şeşen', 'İntizar', 'İzel', 'İclal Aydın', 'İsmail YK', 'İlyas Salman', 'İhsan Yüce', 'İpek Tuzcuoğlu', 'İlker Aksum',
-    'Jale', 'Janset', 'Jülide Kural',
-    'Kaan Urgancıoğlu', 'Kadir İnanır', 'Kadir Doğulu', 'Kemal Sunal', 'Kenan Doğulu', 'Kenan İmirzalıoğlu', 'Kıvanç Tatlıtuğ', 'Kibariye', 'Koray Avcı', 'Kıraç', 'Kayahan', 'Kutsi', 'Kamil Sönmez', 'Kenan Işık', 'Kaan Tangöze', 'Kerem Bursin', 'Kaan Yıldırım', 'Kadir Çöpdemir', 'Kadir Savun', 'Kerem Alışık',
-    'Leman Sam', 'Levent Yüksel', 'Linet', 'Latif Doğan', 'Lale Belkıs', 'Levent Kırca', 'Lütfiye',
-    'Mabel Matiz', 'Mahsun Kırmızıgül', 'Mehmet Ali Erbil', 'Mehmet Günsür', 'Melek Mosso', 'Merve Dizdar', 'Mine Tugay', 'Murat Boz', 'Murat Dalkılıç', 'Mustafa Ceceli', 'Mustafa Sandal', 'Müslüm Gürses', 'Müjdat Gezen', 'Manga', 'Mirkelam', 'Muazzez Abacı', 'Muazzez Ersoy', 'Musa Eroğlu', 'Mazhar Alanson', 'Müşfik Kenter', 'Münir Özkul', 'Metin Akpınar', 'Metin Şentürk', 'Murat Göğebakan', 'Murat Kekilli', 'Murat Yıldırım', 'Melis Sezen', 'Mert Fırat', 'Mert Ramazan Demir', 'Merve Boluğur',
-    'Nebahat Çehre', 'Necati Şaşmaz', 'Nejat İşler', 'Neşet Ertaş', 'Nil Karaibrahimgil', 'Nilüfer', 'Nurgül Yeşilçay', 'Nazan Öncel', 'Nükhet Duru', 'Nadir Göktürk', 'Nev', 'Nuri Sesigüzel', 'Nurettin Rençber', 'Nurhan Damcıoğlu', 'Neco', 'Nergis Kumbasar', 'Neslihan Atagül', 'Numan Çakır', 'Nur Fettahoğlu',
-    'Oğuzhan Koç', 'Okan Bayülgen', 'Orhan Gencebay', 'Ozan Güven', 'Özcan Deniz', 'Özgü Namal', 'Özlem Tekin', 'Onur Akın', 'Oktay Kaynarca', 'Orhan Hakalmaz', 'Ozan Çolakoğlu', 'Ozan Doğulu', 'Orhan Kemal', 'Oya Aydoğan', 'Özkan Uğur', 'Özlem Yılmaz', 'Özge Özpirinçci', 'Öykü Karayel', 'Özge Gürel', 'Özlem Conker', 'Önder Açıkbaş', 'Özkan Uğur',
-    'Pelin Karahan', 'Perran Kutman', 'Pınar Altuğ', 'Pınar Deniz', 'Pinhani', 'Pelin Akil', 'Pınar Aylin', 'Perihan Savaş', 'Peker Açıkalın', 'Polat Alemdar (Kurgusal/Necati Şaşmaz)', 'Pelin Öztekin', 'Pelin Batu',
-    'Rafet El Roman', 'Reynmen', 'Rober Hatemo', 'Rutkay Aziz', 'Resul Dindar', 'Redd', 'Reyhan Karaca', 'Rıza Kocaoğlu', 'Rüştü Asyalı', 'Rasim Öztekin', 'Rıza Akın',
-    'Seda Sayan', 'Sefo', 'Selda Bağcan', 'Serdar Ortaç', 'Serenay Sarıkaya', 'Sertab Erener', 'Sezen Aksu', 'Sıla', 'Sibel Can', 'Sinan Akçıl', 'Şahan Gökbakar', 'Şener Şen', 'Şevval Sam', 'Sagopa Kajmer', 'Soner Sarıkabadayı', 'Seksendört', 'Sami Özer', 'Suavi', 'Seçkin Özdemir', 'Salih Kalyon', 'Sadri Alışık', 'Sarp Apak', 'Serkan Çayoğlu', 'Sarp Akkaya', 'Serhat Teoman', 'Sinem Kobal', 'Selçuk Yöntem',
-    'Şevval Sam', 'Şebnem Ferah', 'Şükriye Tutkun', 'Şafak Sezer', 'Şükrü Özyıldız', 'Şafak Pavey', 'Şevket Çoruh', 'Şirin Ediger',
-    'Tarkan', 'Teoman', 'Tolga Çevik', 'Tolgahan Sayışman', 'Türkan Şoray', 'Tan Taşçı', 'Tuğba Yurt', 'Tuğçe Tayfur', 'Toygar Işıklı', 'Tarık Mengüç', 'Timur Selçuk', 'Tarık Akan', 'Tolga Sarıtaş', 'Tamer Karadağlı', 'Tuba Büyüküstün', 'Timuçin Esen', 'Talat Bulut', 'Tekin Akmansoy', 'Tuncel Kurtiz',
-    'Uğur Yücel', 'Uraz Kaygılaroğlu', 'Ümit Besen', 'Umut Kaya', 'Ufuk Beydemir', 'Uğur Işılak', 'Uğur Aslan', 'Uğur Pektaş', 'Ushan Çakır', 'Uğur Polat', 'Uğur Çavuşoğlu', 'Uğur Güneş', 'Ümit Sayın', 'Ümit Erdim', 'Ümit Kantarcılar', 'Ümit İbrahim Kantarcılar',
-    'Vahide Perçin', 'Volkan Konak', 'Vedat Sakman', 'Veysel Mutlu', 'Volkan Severcan', 'Vildan Atasever', 'Vatan Şaşmaz',
-    'Yalın', 'Yaşar', 'Yıldız Tilbe', 'Yılmaz Erdoğan', 'Yılmaz Morgül', 'Yüksek Sadakat', 'Yusuf Güney', 'Yıldız Usmanova', 'Yılmaz Vural', 'Yonca Evcimik', 'Yıldız Kenter', 'Yalçın Dümer', 'Yavuz Bingöl', 'Yılmaz Zafer', 'Yiğit Özşener', 'Yunus Emre Yıldırımer', 'Yetkin Dikinciler',
-    'Zara', 'Zeki Müren', 'Zerrin Özer', 'Zeynep Bastık', 'Zuhal Olcay', 'Zülfü Livaneli', 'Zeynep Dizdar', 'Zafer Algöz', 'Zeki Alasya', 'Zeynep Casalini', 'Zeynep Çamcı', 'Zeynep Beşerler', 'Zeyno Gönenç', 'Zerrin Tekindor'
+    'Acun Ilıcalı', 'Adile Naşit', 'Ajda Pekkan', 'Ali Sunal', 'Alişan', 'Altan Erkekli', 'Aras Bulut İynemli', 'Aslı Enver', 'Ata Demirer', 'Aleyna Tilki', 'Ahmet Kaya', 'Ahmet Kural', 'Ayşen Gruda', 'Aylin Aslım', 'Athena Gökhan', 'Aydilge', 'Alpay', 'Arif Sağ', 'Ataol Behramoğlu', 'Avni Dilligil', 'Ayhan Işık', 'Aydemir Akbaş', 'Arif Susam', 'Atilla Taş', 'Ayça Ayşin Turan', 'Ali Poyrazoğlu', 'Ahmet Mümtaz Taylan', 'Ayşegül Aldinç', 'Aytaç Arman', 'Ayla Algan', 'Aysel Gürel', 'Ali Atay',
+    'Barış Manço', 'Beren Saat', 'Bergüzar Korel', 'Beyazıt Öztürk', 'Burak Özçivit', 'Bülent Ersoy', 'Buray', 'Büşra Pekin', 'Bülent Ortaçgil', 'Bedia Akartürk', 'Belkıs Akkale', 'Burcu Esmersoy', 'Bergen', 'Barış Akarsu', 'Binnur Kaya', 'Bahar Öztan', 'Bülent İnal', 'Batu Mutlugil', 'Burcu Biricik', 'Burak Deniz', 'Bensu Soral', 'Bahar Candan', 'Bora Öztoprak', 'Bendeniz', 'Burak Yılmaz',
+    'Candan Erçetin', 'Cem Karaca', 'Cem Yılmaz', 'Cüneyt Arkın', 'Çağatay Ulusoy', 'Çetin Tekindor', 'Çağla Şıkel', 'Cem Adrian', 'Cem Belevi', 'Cem Seymen', 'Cemal Hünal', 'Can Bonomo', 'Celil Nalçakan', 'Cansel Elçin', 'Civan Canova', 'Cem Öğretir', 'Coşkun Sabah', 'Can Gürzap', 'Caner Cindoruk', 'Cem Kılıç', 'Cem Gelinoğlu', 'Caner Özyurtlu',
+    'Çolpan İlhan', 'Çiğdem Tunç', 'Çelik', 'Çağlar Ertuğrul', 'Çetin Altan', 'Çağlar Çorumlu', 'Çetin Alp',
+    'Demet Akalın', 'Demet Evgar', 'Demet Akbağ', 'Doğu Demirkol', 'Doğa Rutkay', 'Defne Samyeli', 'Deniz Seki', 'Derya Uluğ', 'Doğuş', 'Duman', 'Demet Sağıroğlu', 'Deniz Uğur', 'Devrim Yakut', 'Deniz Çakır', 'Dilek Türkan', 'Devrim Evin', 'Doğa Bora', 'Defne Joy Foster',
+    'Ebru Gündeş', 'Edis', 'Engin Akyürek', 'Engin Altan Düzyatan', 'Erol Evgin', 'Eser Yenenler', 'Ezgi Mola', 'Emre Altuğ', 'Emel Sayın', 'Ebru Yaşar', 'Ece Seçkin', 'Emircan İğrek', 'Ekin Uzunlar', 'Erkin Koray', 'Edip Akbayram', 'Erol Büyükburç', 'Ersay Üner', 'Emre Aydın', 'Ebru Şallı', 'Esra Erol', 'Erdal Özyağcılar', 'Ertan Saban', 'Erkan Can', 'Engin Günaydın', 'Erkan Petekkaya', 'Ezgi Eyüboğlu', 'Elçin Sangu', 'Ege', 'Ebru Cündübeyoğlu', 'Emre Kınay', 'Engin Öztürk', 'Eser West',
+    'Fahriye Evcen', 'Fatih Ürek', 'Fatma Girik', 'Ferdi Tayfur', 'Filiz Akın', 'Funda Arar', 'Fatih Erkoç', 'Ferhat Göçer', 'Fırat Tanış', 'Faruk Tınaz', 'Fedon', 'Fikret Kızılok', 'Fatma Turgut', 'Ferhan Şensoy', 'Furkan Andıç', 'Fikret Hakan', 'Faruk Peker', 'Fırat Çelik', 'Furkan Palalı', 'Fadik Sevin Atasoy',
+    'Gökhan Özoğuz', 'Gökçe Bahadır', 'Gülben Ergen', 'Gülse Birsel', 'Gülşen', 'Gülnaz', 'Gökhan Tepe', 'Gökhan Türkmen', 'Gülşen Bubikoğlu', 'Gönül Yazar', 'Gripin', 'Gülhanım', 'Gupse Özay', 'Gürkan Uygun', 'Gizem Karaca', 'Gökçe', 'Güven Kıraç', 'Gökhan Kırdar', 'Gökhan Özen', 'Gülcan Arslan', 'Gamze Özçelik', 'Göksel', 'Gökhan Keser',
+    'Hadise', 'Halit Ergenç', 'Haluk Bilginer', 'Haluk Levent', 'Hande Erçel', 'Hande Yener', 'Hayko Cepkin', 'Hülya Avşar', 'Hülya Koçyiğit', 'Hakkı Bulut', 'Hakan Altun', 'Hakan Peker', 'Hande Ataizi', 'Hazal Kaya', 'Hümeyra', 'Hüseyin Turan', 'Hakan Taşıyan', 'Halil Sezai', 'Hasan Can Kaya', 'Hande Doğandemir', 'Hande Soral', 'Hakan Yılmaz', 'Halil Ergün', 'Hazal Subaşı',
+    'Işın Karaca', 'İbrahim Büyükak', 'İbrahim Çelikkol', 'İbrahim Tatlıses', 'İlker Ayrık', 'İlker Kaleli', 'İrem Derici', 'İlyas Yalçıntaş', 'Irmak Arıcı', 'İlhan Şeşen', 'İntizar', 'İzel', 'İclal Aydın', 'İsmail YK', 'İlyas Salman', 'İhsan Yüce', 'İpek Tuzcuoğlu', 'İlker Aksum', 'İrem Sak', 'İsmail Hacıoğlu', 'İlhan İrem', 'Işıl Yücesoy', 'İlker İnanoğlu', 'İpek Filiz Yazıcı',
+    'Jale', 'Janset', 'Jülide Kural', 'Jess Molho', 'Jülide Ateş',
+    'Kaan Urgancıoğlu', 'Kadir İnanır', 'Kadir Doğulu', 'Kemal Sunal', 'Kenan Doğulu', 'Kenan İmirzalıoğlu', 'Kıvanç Tatlıtuğ', 'Kibariye', 'Koray Avcı', 'Kıraç', 'Kayahan', 'Kutsi', 'Kamil Sönmez', 'Kenan Işık', 'Kaan Tangöze', 'Kerem Bursin', 'Kaan Yıldırım', 'Kadir Çöpdemir', 'Kadir Savun', 'Kerem Alışık', 'Kıvanç Kasabalı', 'Kemal Doğulu', 'Kenan Çoban', 'Keremcem', 'Kuşum Aydın',
+    'Leman Sam', 'Levent Yüksel', 'Linet', 'Latif Doğan', 'Lale Belkıs', 'Levent Kırca', 'Lütfiye', 'Lale Mansur', 'Lara', 'Leman Süheyl',
+    'Mabel Matiz', 'Mahsun Kırmızıgül', 'Mehmet Ali Erbil', 'Mehmet Günsür', 'Melek Mosso', 'Merve Dizdar', 'Mine Tugay', 'Murat Boz', 'Murat Dalkılıç', 'Mustafa Ceceli', 'Mustafa Sandal', 'Müslüm Gürses', 'Müjdat Gezen', 'Manga', 'Mirkelam', 'Muazzez Abacı', 'Muazzez Ersoy', 'Musa Eroğlu', 'Mazhar Alanson', 'Müşfik Kenter', 'Münir Özkul', 'Metin Akpınar', 'Metin Şentürk', 'Murat Göğebakan', 'Murat Kekilli', 'Murat Yıldırım', 'Melis Sezen', 'Mert Fırat', 'Mert Ramazan Demir', 'Merve Boluğur', 'Mehmet Aslantuğ', 'Meltem Cumbul', 'Mustafa Uğurlu', 'Mazlum Çimen', 'Metin Arolat', 'Mert Yazıcıoğlu',
+    'Nebahat Çehre', 'Necati Şaşmaz', 'Nejat İşler', 'Neşet Ertaş', 'Nil Karaibrahimgil', 'Nilüfer', 'Nurgül Yeşilçay', 'Nazan Öncel', 'Nükhet Duru', 'Nadir Göktürk', 'Nev', 'Nuri Sesigüzel', 'Nurettin Rençber', 'Nurhan Damcıoğlu', 'Neco', 'Nergis Kumbasar', 'Neslihan Atagül', 'Numan Çakır', 'Nur Fettahoğlu', 'Nur Sürer', 'Necla Nazır', 'Naşide Göktürk', 'Nehir Erdoğan', 'Nadir Sarıbacak', 'Nuri Alço', 'Nazan Şoray',
+    'Oğuzhan Koç', 'Okan Bayülgen', 'Orhan Gencebay', 'Ozan Güven', 'Özcan Deniz', 'Özgü Namal', 'Özlem Tekin', 'Onur Akın', 'Oktay Kaynarca', 'Orhan Hakalmaz', 'Ozan Çolakoğlu', 'Ozan Doğulu', 'Orhan Kemal', 'Oya Aydoğan', 'Özkan Uğur', 'Özlem Yılmaz', 'Özge Özpirinçci', 'Öykü Karayel', 'Özge Gürel', 'Özlem Conker', 'Önder Açıkbaş', 'Onur Saylak', 'Onur Tuna', 'Ozan Arif', 'Özge Ulusoy', 'Oya Başar', 'Oya Eren', 'Onur Büyüktopçu', 'Onur Atilla',
+    'Pelin Karahan', 'Perran Kutman', 'Pınar Altuğ', 'Pınar Deniz', 'Pinhani', 'Pelin Akil', 'Pınar Aylin', 'Perihan Savaş', 'Peker Açıkalın', 'Pelin Öztekin', 'Pelin Batu', 'Pamela', 'Pınar Dilşeker', 'Pelin Diştaş', 'Pars', 'Petek Dinçöz',
+    'Rafet El Roman', 'Reynmen', 'Rober Hatemo', 'Rutkay Aziz', 'Resul Dindar', 'Redd', 'Reyhan Karaca', 'Rıza Kocaoğlu', 'Rüştü Asyalı', 'Rasim Öztekin', 'Rıza Akın', 'Rıza Çalımbay', 'Rojda', 'Reha Özcan', 'Ragıp Savaş', 'Recep Aktuğ', 'Recep İvedik', 'Rıza Silahlıpoda',
+    'Seda Sayan', 'Sefo', 'Selda Bağcan', 'Serdar Ortaç', 'Serenay Sarıkaya', 'Sertab Erener', 'Sezen Aksu', 'Sıla', 'Sibel Can', 'Sinan Akçıl', 'Şahan Gökbakar', 'Şener Şen', 'Şevval Sam', 'Sagopa Kajmer', 'Soner Sarıkabadayı', 'Seksendört', 'Sami Özer', 'Suavi', 'Seçkin Özdemir', 'Salih Kalyon', 'Sadri Alışık', 'Sarp Apak', 'Serkan Çayoğlu', 'Sarp Akkaya', 'Serhat Teoman', 'Sinem Kobal', 'Selçuk Yöntem', 'Songül Öden', 'Sinan Özen', 'Serenay Aktaş', 'Seda Bakan', 'Selin Şekerci', 'Saadet Işıl Aksoy', 'Sümer Tilmaç', 'Suna Yıldızoğlu', 'Selçuk Balcı', 'Sibel Tüzün', 'Seden Gürel', 'Serkan Kaya', 'Seyfi Dursunoğlu',
+    'Şebnem Ferah', 'Şükriye Tutkun', 'Şafak Sezer', 'Şükrü Özyıldız', 'Şafak Pavey', 'Şevket Çoruh', 'Şirin Ediger', 'Şevket Altuğ', 'Şebnem Bozoklu', 'Şoray Uzun', 'Şebnem Dönmez', 'Şükrü Avşar', 'Şehrazat', 'Şükran Ovalı',
+    'Tarkan', 'Teoman', 'Tolga Çevik', 'Tolgahan Sayışman', 'Türkan Şoray', 'Tan Taşçı', 'Tuğba Yurt', 'Tuğçe Tayfur', 'Toygar Işıklı', 'Tarık Mengüç', 'Timur Selçuk', 'Tarık Akan', 'Tolga Sarıtaş', 'Tamer Karadağlı', 'Tuba Büyüküstün', 'Timuçin Esen', 'Talat Bulut', 'Tekin Akmansoy', 'Tuncel Kurtiz', 'Tarık Tarcan', 'Tanju Okan', 'Tolga Karel', 'Tuğba Ekinci', 'Tuba Ünsal', 'Tarık Papuççuoğlu', 'Tuna Kiremitçi', 'Tansel Öngel', 'Toprak Sağlam',
+    'Uğur Yücel', 'Uraz Kaygılaroğlu', 'Ümit Besen', 'Umut Kaya', 'Ufuk Beydemir', 'Uğur Işılak', 'Uğur Aslan', 'Uğur Pektaş', 'Ushan Çakır', 'Uğur Polat', 'Uğur Çavuşoğlu', 'Uğur Güneş', 'Ümit Sayın', 'Ümit Erdim', 'Ümit Kantarcılar', 'Ufuk Özkan', 'Uğur Arslan', 'Utku Barış', 'Umut Akyürek', 'Umur Bugay', 'Ülkü Duru', 'Ümit Yaşar Oğuzcan',
+    'Vahide Perçin', 'Volkan Konak', 'Vedat Sakman', 'Veysel Mutlu', 'Volkan Severcan', 'Vildan Atasever', 'Vatan Şaşmaz', 'Vahdet Vural', 'Volkan Demirel',
+    'Yalın', 'Yaşar', 'Yıldız Tilbe', 'Yılmaz Erdoğan', 'Yılmaz Morgül', 'Yüksek Sadakat', 'Yusuf Güney', 'Yıldız Usmanova', 'Yılmaz Vural', 'Yonca Evcimik', 'Yıldız Kenter', 'Yalçın Dümer', 'Yavuz Bingöl', 'Yılmaz Zafer', 'Yiğit Özşener', 'Yunus Emre Yıldırımer', 'Yetkin Dikinciler', 'Yasemin Allen', 'Yağmur Tanrısevsin', 'Yalçın Hafızoğlu', 'Yonca Lodi', 'Yavuz Seçkin', 'Yıldız Asyalı', 'Yusuf Çim', 'Yeşim Salkım', 'Yaşar Alptekin',
+    'Zara', 'Zeki Müren', 'Zerrin Özer', 'Zeynep Bastık', 'Zuhal Olcay', 'Zülfü Livaneli', 'Zeynep Dizdar', 'Zafer Algöz', 'Zeki Alasya', 'Zeynep Casalini', 'Zeynep Çamcı', 'Zeynep Beşerler', 'Zeyno Gönenç', 'Zerrin Tekindor', 'Zuhal Topal', 'Zafer Ergin', 'Zeynep Farah Abdullah', 'Zeynep Tokuş', 'Zekeriya Önge'
   ]
 };
 
 // ==========================================
 // KÜÇÜK/BÜYÜK HARF (CASE INSENSITIVITY) OPTİMİZASYONU
 // ==========================================
-// Performans için oyun başlarken devasa sözlüğü BİR KERE tamamen küçük harfe çevirip belleğe alıyoruz.
-// Bu sayede binlerce kelimelik sözlük, klavyeden ne yazılırsa yazılsın milisaniyeler içinde eşleşir.
 const NORMALIZED_DICTIONARY = {};
 Object.keys(GAME_DICTIONARY).forEach(cat => {
    NORMALIZED_DICTIONARY[cat] = GAME_DICTIONARY[cat].map(w => w.trim().toLocaleLowerCase('tr-TR'));
 });
 
-// Bot Logic (Bota Kapsamlı Sözlükten Cevap Ürettir)
+// Bot Logic
 const generateBotSubmission = (letter, categories) => {
   const answers = {};
   const lowerLetter = letter.toLocaleLowerCase('tr-TR');
   categories.forEach(cat => {
       let word = "";
       let isValid = false;
-      if (Math.random() > 0.10) { // Bot %90 ihtimalle cevap verir
+      if (Math.random() > 0.10) {
           if (GAME_DICTIONARY[cat]) {
               const matches = GAME_DICTIONARY[cat].filter(w => w.toLocaleLowerCase('tr-TR').startsWith(lowerLetter));
               if (matches.length > 0) {
@@ -294,23 +288,19 @@ const validateAnswersWithAI = async (answers, letter, categories) => {
     // TAM KÜÇÜK HARF UYUMU VE BOŞLUK TEMİZLİĞİ
     const normalized = word.trim().toLocaleLowerCase('tr-TR');
     
-    // Kurallar: En az 2 harf olacak ve istenen harfle başlayacak
     const isValidFormat = normalized.length > 1 && normalized.startsWith(lowerLetter);
 
     results[cat] = { word: word.trim(), isValid: isValidFormat };
 
     if (isValidFormat) {
-      // Sözlükte var mı kontrol et (Süper Hızlı)
       if (NORMALIZED_DICTIONARY[cat].includes(normalized)) {
         results[cat].isValid = true;
       } else {
-        // Sözlükte yepyeni/farklı bir şey yazıldıysa AI onayı için sıraya al
         wordsToCheck.push({ category: cat, word: normalized });
       }
     }
   }
 
-  // EĞER SÖZLÜKTE BULUNAMAYAN ŞÜPHELİ KELİME VARSA: AI'ya Sor
   if (wordsToCheck.length > 0) {
      if (apiKey) {
         try {
@@ -318,7 +308,7 @@ const validateAnswersWithAI = async (answers, letter, categories) => {
            ÖNEMLİ KURALLAR:
            1- Uydurma kelimeleri (örneğin "göpek"), yanlış yazımları veya kategorisine uymayan kelimeleri KESİNLİKLE "false" olarak işaretle. 
            2- 'Şehir' kategorisinde SADECE Türkiye'nin 81 ilinden biri kabul edilmelidir. 
-           3- 'Sanatçı' kategorisinde tanınmış Türk şarkıcı veya oyuncular kabul edilmelidir.
+           3- 'Sanatçı' kategorisinde tanınmış Türk şarkıcı, sanatçı veya oyuncular kabul edilmelidir.
            Sadece JSON formatında cevap ver. Örnek: {"İsim": true, "Şehir": false}. Kontrol edilecekler: ${JSON.stringify(wordsToCheck)}`;
            
            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
@@ -340,11 +330,9 @@ const validateAnswersWithAI = async (answers, letter, categories) => {
            }
         } catch (e) {
            console.error("AI Error:", e);
-           // Hata olursa yine de güvenme, yanlış say!
            for (const item of wordsToCheck) results[item.category].isValid = false;
         }
      } else {
-        // AI anahtarı yoksa (Örn Vercel'de) ve devasa sözlükte de bulunamadıysa KESİN GEÇERSİZ say (Uydurmaları engellemek için)
         for (const item of wordsToCheck) {
            results[item.category].isValid = false;
         }
@@ -646,7 +634,6 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
   const [phase, setPhase] = useState('roulette'); 
   const [displayLetter, setDisplayLetter] = useState('?');
   
-  // YEREL SAAT SENKRONİZASYONU (SÜRE HATALARINI ÖNLER)
   const [timeLeft, setTimeLeft] = useState(currentRoundData.durationSecs || 60);
   const [answers, setAnswers] = useState({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -654,9 +641,7 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
   
   const inputRefs = useRef([]);
 
-  // 1. AŞAMA: RULET
   useEffect(() => {
-    // Sayfa her yeni turda yüklendiğinde tamamen sıfırla
     setPhase('roulette');
     setHasSubmitted(false);
     setAnswers({});
@@ -666,11 +651,11 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
     const interval = setInterval(() => {
       setDisplayLetter(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]);
       ticks++;
-      if (ticks > 30) { // 3 saniye boyunca harf döner
+      if (ticks > 30) { 
          clearInterval(interval);
          setDisplayLetter(currentRoundData.letter);
          setPhase('playing');
-         setLocalStartTime(Date.now()); // Oyunun GERÇEKTEN başladığı anı kaydet
+         setLocalStartTime(Date.now()); 
          playSound('ding');
       }
     }, 100);
@@ -678,11 +663,10 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
     return () => clearInterval(interval);
   }, [currentRoundData.letter, room.currentRound]);
 
-  // 2. AŞAMA: OYUN SÜRESİ
   useEffect(() => {
     if (phase === 'playing' && !hasSubmitted) {
        if (timeLeft <= 0) {
-          handleSubmit(); // Süre biterse otomatik yolla
+          handleSubmit(); 
           return;
        }
        const timerId = setTimeout(() => {
@@ -703,7 +687,6 @@ const GameScreen = ({ room, user, onSubmitAnswers }) => {
     if (hasSubmitted) return;
     playSound('ding');
     setHasSubmitted(true);
-    // Hız bonusunu hesaplamak için geçen süreyi hesapla
     const timeTaken = (currentRoundData.durationSecs || 60) - timeLeft;
     onSubmitAnswers(answers, timeTaken > 0 ? timeTaken : (currentRoundData.durationSecs || 60)); 
   };
@@ -801,7 +784,6 @@ const RoundResultsScreen = ({ room, user, onNextRound }) => {
   const currentRoundData = room.rounds[room.currentRound];
   const { scores, answers, letter } = currentRoundData;
 
-  // Liderlik mantığı ve toplam puana göre sıralama
   const sortedPlayers = Object.values(room.players).sort((a, b) => b.score - a.score);
 
   return (
@@ -832,9 +814,9 @@ const RoundResultsScreen = ({ room, user, onNextRound }) => {
                          </div>
                        </div>
                        <div className="flex gap-2 md:gap-4 self-end md:self-auto">
-                          <div className="bg-green-500/10 border-2 border-green-500/30 px-3 py-2 md:px-6 md:py-3 rounded-2xl flex flex-col items-center justify-center shadow-inner">
-                             <span className="text-xl md:text-3xl font-black text-green-400">+{pScores?.points || 0}</span>
-                             <span className="text-[8px] md:text-[10px] text-green-500/80 uppercase font-black mt-1">Bu Tur</span>
+                          <div className={`border-2 px-3 py-2 md:px-6 md:py-3 rounded-2xl flex flex-col items-center justify-center shadow-inner ${pScores?.points < 0 ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-green-500/10 border-green-500/30 text-green-400'}`}>
+                             <span className="text-xl md:text-3xl font-black">{pScores?.points > 0 ? '+' : ''}{pScores?.points || 0}</span>
+                             <span className="text-[8px] md:text-[10px] uppercase font-black mt-1 opacity-80">Bu Tur</span>
                           </div>
                           <div className="bg-indigo-500/10 border-2 border-indigo-500/30 px-4 py-2 md:px-6 md:py-3 rounded-2xl flex flex-col items-center justify-center shadow-inner">
                              <span className="text-2xl md:text-3xl font-black text-indigo-400">{player.score}</span>
@@ -846,21 +828,27 @@ const RoundResultsScreen = ({ room, user, onNextRound }) => {
                        <div className="flex flex-wrap gap-2 md:gap-3">
                          {room.settings.categories.map(cat => {
                             const answerObj = pAnswers[cat];
-                            if (!answerObj || !answerObj.word) {
-                               return <div key={cat} className="text-xs md:text-sm font-bold bg-slate-800 text-slate-500 px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-slate-700">{cat}: <span className="italic">Boş</span></div>;
+                            
+                            // BOŞ CEVAP (-1 Puan)
+                            if (!answerObj || !answerObj.word || answerObj.word.trim() === '') {
+                               return <div key={cat} className="text-xs md:text-sm font-bold bg-slate-800 text-slate-500 px-3 py-1.5 md:px-4 md:py-2 rounded-xl border border-slate-700">{cat}: <span className="italic">Boş</span> <span className="text-red-400 ml-1 opacity-80">(-1)</span></div>;
                             }
+                            // YANLIŞ CEVAP (-2 Puan)
                             if (!answerObj.isValid) {
-                               return <div key={cat} className="text-xs md:text-sm font-bold bg-red-950/40 border border-red-500/30 text-red-400 px-3 py-1.5 md:px-4 md:py-2 rounded-xl line-through decoration-red-500 decoration-2">{cat}: {answerObj.word}</div>;
+                               return <div key={cat} className="text-xs md:text-sm font-bold bg-red-950/40 border border-red-500/30 text-red-400 px-3 py-1.5 md:px-4 md:py-2 rounded-xl line-through decoration-red-500 decoration-2">{cat}: {answerObj.word} <span className="text-red-400 ml-1 decoration-transparent">(-2)</span></div>;
                             }
+                            
+                            // DOĞRU CEVAP (+5 veya +3)
                             return (
                                <div key={cat} className={`text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-xl border-2 ${answerObj.isUnique ? 'bg-fuchsia-900/30 border-fuchsia-500 text-fuchsia-100 shadow-[0_0_15px_rgba(217,70,239,0.2)]' : 'bg-cyan-900/30 border-cyan-500/50 text-cyan-100'}`}>
-                                  <span className="opacity-70 mr-1">{cat}:</span> <span className="text-white text-[14px] md:text-base">{answerObj.word}</span> <span className="ml-1 md:ml-2 text-[10px] md:text-xs font-black opacity-80">(+{answerObj.isUnique ? 10 : 3})</span>
+                                  <span className="opacity-70 mr-1">{cat}:</span> <span className="text-white text-[14px] md:text-base">{answerObj.word}</span> <span className="ml-1 md:ml-2 text-[10px] md:text-xs font-black opacity-80">(+{answerObj.isUnique ? 5 : 3})</span>
                                </div>
                             );
                          })}
+                         {/* HIZ BONUSU (+2) */}
                          {isFastest && (
                             <div className="text-xs md:text-sm font-black bg-yellow-500/20 border-2 border-yellow-500 text-yellow-400 px-3 py-1.5 md:px-4 md:py-2 rounded-xl flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
-                               <Zap className="w-4 h-4 md:w-5 md:h-5 fill-current" /> En Hızlı (+5)
+                               <Zap className="w-4 h-4 md:w-5 md:h-5 fill-current" /> En Hızlı (+2)
                             </div>
                          )}
                        </div>
@@ -910,16 +898,13 @@ const FinalScoreScreen = ({ room, user }) => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 py-16 md:py-20 relative overflow-hidden">
-       {/* Sürekli Patlayan Şeker/Konfeti Efektleri */}
        <div className="absolute inset-0 pointer-events-none opacity-80">
           {[...Array(40)].map((_, i) => (
              <div key={i} className="absolute w-3 h-3 md:w-4 md:h-4 rounded-full animate-ping" style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, animationDelay: `${Math.random() * 2}s`, animationDuration: `${1 + Math.random() * 3}s`, backgroundColor: ['#d946ef', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'][Math.floor(Math.random() * 6)] }} />
           ))}
        </div>
 
-       <div className="relative z-10 w-full max-w-3xl bg-slate-900/80 backdrop-blur-2xl border-4 border-yellow-500/50 p-8 md:p-16 rounded-[3rem] shadow-[0_0_120px_rgba(234,179,8,0.2)] text-center">
-          
-          {/* ÇOK TATLI ŞAMPİYON GÖSTERİMİ */}
+       <div className="relative z-10 w-full max-w-3xl bg-slate-900/80 backdrop-blur-2xl border-4 border-yellow-500/50 p-8 md:p-16 rounded-[3rem] shadow-[0_0_120px_rgba(234,179,8,0.2)] text-center mt-10">
           <div className="relative inline-block mt-4 mb-10 group">
              <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-fuchsia-400 rounded-full blur-3xl opacity-50 animate-spin-slow"></div>
              <Crown className="w-20 h-20 md:w-32 md:h-32 text-yellow-400 absolute -top-12 md:-top-20 left-1/2 transform -translate-x-1/2 -rotate-12 drop-shadow-[0_10px_20px_rgba(250,204,21,0.6)] z-20 animate-bounce" fill="currentColor" />
@@ -978,7 +963,6 @@ export default function App() {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // ÇÖZÜM: Vercel ve diğer ortamlarda token hatası almamak için doğrudan anonim giriş kullanıldı.
         await signInAnonymously(auth);
       } catch (err) {
         console.error("Auth Error:", err);
@@ -1167,26 +1151,44 @@ export default function App() {
            minTime = allAnswers[uid].timeTaken; fastestUser = uid;
         }
      }
-     if (fastestUser) { allAnswers[fastestUser].isFastest = true; scores[fastestUser].points += 5; }
 
      for (const cat of categories) {
         const wordFrequency = {};
+        
         for (const uid of Object.keys(allAnswers)) {
            const ansObj = allAnswers[uid].answers[cat];
-           if (ansObj && ansObj.isValid) {
-              const normalizedWord = ansObj.word.toLocaleLowerCase('tr-TR').trim();
-              wordFrequency[normalizedWord] = (wordFrequency[normalizedWord] || 0) + 1;
+           
+           if (!ansObj || !ansObj.word || ansObj.word.trim() === "") {
+               scores[uid].points -= 1;
+           } else if (!ansObj.isValid) {
+               scores[uid].points -= 2;
+           } else {
+               const normalizedWord = ansObj.word.toLocaleLowerCase('tr-TR').trim();
+               wordFrequency[normalizedWord] = (wordFrequency[normalizedWord] || 0) + 1;
            }
         }
+        
         for (const uid of Object.keys(allAnswers)) {
            const ansObj = allAnswers[uid].answers[cat];
-           if (ansObj && ansObj.isValid) {
+           if (ansObj && ansObj.isValid && ansObj.word.trim() !== "") {
               const freq = wordFrequency[ansObj.word.toLocaleLowerCase('tr-TR').trim()];
-              if (freq === 1) { scores[uid].points += 10; allAnswers[uid].answers[cat].isUnique = true; } 
-              else if (freq > 1) { scores[uid].points += 3; allAnswers[uid].answers[cat].isUnique = false; }
+              if (freq === 1) { 
+                 scores[uid].points += 5;
+                 allAnswers[uid].answers[cat].isUnique = true; 
+              } 
+              else if (freq > 1) { 
+                 scores[uid].points += 3;
+                 allAnswers[uid].answers[cat].isUnique = false; 
+              }
            }
         }
      }
+     
+     if (fastestUser && scores[fastestUser]) { 
+         allAnswers[fastestUser].isFastest = true; 
+         scores[fastestUser].points += 2; 
+     }
+     
      return scores;
   };
 
